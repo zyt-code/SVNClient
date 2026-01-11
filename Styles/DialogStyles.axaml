@@ -1,0 +1,168 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- =============================================
+         Dialog Window Base Style
+         Applied to all Windows
+         ============================================= -->
+    <Style Selector="Window">
+        <Setter Property="Background" Value="{DynamicResource AppBackgroundBrush}"/>
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
+        <Setter Property="WindowStartupLocation" Value="CenterOwner"/>
+    </Style>
+
+    <!-- =============================================
+         Dialog Header Style
+         ============================================= -->
+    <Style Selector="Window.dialog > Grid > Border.dialog-header">
+        <Setter Property="Background" Value="{DynamicResource AppSecondaryBackgroundBrush}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource SidebarBorderBrush}"/>
+        <Setter Property="BorderThickness" Value="0,0,0,1"/>
+        <Setter Property="Padding" Value="24,18,24,16"/>
+    </Style>
+
+    <!-- =============================================
+         Dialog Content Area Style
+         ============================================= -->
+    <Style Selector="Window.dialog > Grid > ScrollViewer">
+        <Setter Property="Padding" Value="24,16,24,16"/>
+        <Setter Property="HorizontalScrollBarVisibility" Value="Disabled"/>
+        <Setter Property="VerticalScrollBarVisibility" Value="Auto"/>
+    </Style>
+
+    <Style Selector="Window.dialog > Grid > Border.dialog-content">
+        <Setter Property="Padding" Value="24,16,24,16"/>
+    </Style>
+
+    <!-- =============================================
+         Dialog Footer Style
+         Standard padding for all dialog footers
+         ============================================= -->
+    <Style Selector="Window.dialog > Grid > Border.dialog-footer">
+        <Setter Property="Background" Value="{DynamicResource AppSecondaryBackgroundBrush}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource SidebarBorderBrush}"/>
+        <Setter Property="BorderThickness" Value="0,1,0,0"/>
+        <Setter Property="Padding" Value="24,18,24,20"/>
+    </Style>
+
+    <!-- =============================================
+         Dialog Status Bar Style
+         ============================================= -->
+    <Style Selector="Border.dialog-status">
+        <Setter Property="Background" Value="{DynamicResource AppSecondaryBackgroundBrush}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource SidebarBorderBrush}"/>
+        <Setter Property="BorderThickness" Value="0,1,0,0"/>
+        <Setter Property="Padding" Value="24,10,24,10"/>
+    </Style>
+
+    <!-- =============================================
+         Dialog Title Text Style
+         ============================================= -->
+    <Style Selector="TextBlock.dialog-title">
+        <Setter Property="FontSize" Value="20"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
+    </Style>
+
+    <!-- =============================================
+         Dialog Subtitle Text Style
+         ============================================= -->
+    <Style Selector="TextBlock.dialog-subtitle">
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="Foreground" Value="{DynamicResource SecondaryTextBrush}"/>
+    </Style>
+
+    <!-- =============================================
+         Dialog Field Label Style
+         ============================================= -->
+    <Style Selector="TextBlock.dialog-label">
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
+    </Style>
+
+    <!-- =============================================
+         Dialog Input Box Style
+         ============================================= -->
+    <Style Selector="Border.dialog-input">
+        <Setter Property="Background" Value="{DynamicResource InputBackgroundBrush}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource InputBorderBrush}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="CornerRadius" Value="6"/>
+        <Setter Property="Padding" Value="12,10"/>
+        <Setter Property="MinHeight" Value="38"/>
+    </Style>
+
+    <!-- TextBox inside dialog input -->
+    <Style Selector="Border.dialog-input > TextBox">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
+        <Setter Property="CaretBrush" Value="{DynamicResource AccentBrush}"/>
+    </Style>
+
+    <!-- TextBlock inside dialog input (for display-only fields) -->
+    <Style Selector="Border.dialog-input > TextBlock">
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+    </Style>
+
+    <!-- =============================================
+         Dialog Button Style
+         Standard padding for buttons in dialog footer
+         ============================================= -->
+    <Style Selector="Window.dialog > Grid > Border.dialog-footer > Grid > Button">
+        <Setter Property="Padding" Value="24,10"/>
+    </Style>
+
+    <!-- =============================================
+         Dialog Card Style
+         For content areas with borders
+         ============================================= -->
+    <Style Selector="Border.dialog-card">
+        <Setter Property="Background" Value="{DynamicResource CardBackgroundBrush}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource CardBorderBrush}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="Padding" Value="8"/>
+    </Style>
+
+    <Style Selector="Border.dialog-card > ScrollViewer">
+        <Setter Property="HorizontalScrollBarVisibility" Value="Disabled"/>
+        <Setter Property="VerticalScrollBarVisibility" Value="Auto"/>
+    </Style>
+
+    <!-- =============================================
+         Dialog Size Classes
+         ============================================= -->
+    <Style Selector="Window.small">
+        <Setter Property="Width" Value="450"/>
+        <Setter Property="MaxHeight" Value="500"/>
+    </Style>
+
+    <Style Selector="Window.medium">
+        <Setter Property="Width" Value="600"/>
+        <Setter Property="MaxHeight" Value="700"/>
+    </Style>
+
+    <Style Selector="Window.large">
+        <Setter Property="Width" Value="850"/>
+        <Setter Property="MaxHeight" Value="800"/>
+    </Style>
+
+    <Style Selector="Window.extralarge">
+        <Setter Property="Width" Value="1000"/>
+        <Setter Property="MaxHeight" Value="850"/>
+        <Setter Property="MinWidth" Value="800"/>
+        <Setter Property="MinHeight" Value="500"/>
+    </Style>
+
+    <!-- Resizable dialogs -->
+    <Style Selector="Window.resizable, Window.large.resizable, Window.extralarge.resizable">
+        <Setter Property="CanResize" Value="True"/>
+    </Style>
+
+</Styles>

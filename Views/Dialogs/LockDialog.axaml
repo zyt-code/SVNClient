@@ -1,0 +1,245 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:Svns.ViewModels"
+        xmlns:material="using:Material.Icons.Avalonia"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="550" d:DesignHeight="500"
+        x:Class="Svns.Views.Dialogs.LockDialog"
+        x:DataType="vm:LockViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="Lock/Unlock Files - Svns"
+        Classes="dialog medium"
+        Width="550" Height="500"
+        MinWidth="450" MinHeight="400"
+        Background="{DynamicResource AppBackgroundBrush}"
+        WindowStartupLocation="CenterOwner">
+
+    <Design.DataContext>
+        <vm:LockViewModel/>
+    </Design.DataContext>
+
+    <Grid RowDefinitions="Auto,*,Auto,Auto">
+        <!-- Header -->
+        <Border Grid.Row="0" Classes="dialog-header">
+            <Grid ColumnDefinitions="Auto,*">
+                <material:MaterialIcon Grid.Column="0" Kind="Lock" Width="32" Height="32"
+                                       Foreground="{DynamicResource AccentBrush}"
+                                       VerticalAlignment="Center"
+                                       Margin="0,0,16,0"/>
+                <StackPanel Grid.Column="1" Spacing="4" VerticalAlignment="Center">
+                    <TextBlock Text="Lock/Unlock Files" FontSize="20" FontWeight="SemiBold"
+                               Foreground="{DynamicResource PrimaryTextBrush}"/>
+                    <TextBlock Text="Manage file locks for exclusive editing"
+                               FontSize="13"
+                               Foreground="{DynamicResource SecondaryTextBrush}"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Content -->
+        <ScrollViewer Grid.Row="1" Padding="24,16">
+            <StackPanel Spacing="16">
+                <!-- File List -->
+                <StackPanel Spacing="4">
+                    <TextBlock Text="Files" FontSize="12" FontWeight="SemiBold"
+                               Foreground="{DynamicResource SecondaryTextBrush}"/>
+                    <Border Background="{DynamicResource CardBackgroundBrush}"
+                            BorderBrush="{DynamicResource CardBorderBrush}"
+                            BorderThickness="1"
+                            CornerRadius="8"
+                            MaxHeight="150">
+                        <ScrollViewer HorizontalScrollBarVisibility="Disabled">
+                            <ItemsControl ItemsSource="{Binding Files}" Padding="8">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Padding="8,6" CornerRadius="4" Margin="0,2">
+                                            <Grid ColumnDefinitions="Auto,Auto,*,Auto">
+                                                <CheckBox Grid.Column="0"
+                                                          IsChecked="{Binding IsSelected}"
+                                                          VerticalAlignment="Center"
+                                                          Margin="0,0,8,0"/>
+                                                <material:MaterialIcon Grid.Column="1"
+                                                                       Kind="FileDocument"
+                                                                       Width="16" Height="16"
+                                                                       Foreground="{DynamicResource SecondaryTextBrush}"
+                                                                       VerticalAlignment="Center"
+                                                                       Margin="0,0,8,0"/>
+                                                <TextBlock Grid.Column="2"
+                                                           Text="{Binding Name}"
+                                                           FontSize="13"
+                                                           Foreground="{DynamicResource PrimaryTextBrush}"
+                                                           TextTrimming="CharacterEllipsis"
+                                                           VerticalAlignment="Center"
+                                                           ToolTip.Tip="{Binding Path}"/>
+                                                <material:MaterialIcon Grid.Column="3"
+                                                                       Kind="Lock"
+                                                                       Width="14" Height="14"
+                                                                       Foreground="#FF9800"
+                                                                       VerticalAlignment="Center"
+                                                                       IsVisible="{Binding IsLocked}"/>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </Border>
+                </StackPanel>
+
+                <!-- Lock Message -->
+                <StackPanel Spacing="4">
+                    <TextBlock Text="Lock Message (optional)" FontSize="12" FontWeight="SemiBold"
+                               Foreground="{DynamicResource SecondaryTextBrush}"/>
+                    <Border Background="{DynamicResource InputBackgroundBrush}"
+                            BorderBrush="{DynamicResource InputBorderBrush}"
+                            BorderThickness="1"
+                            CornerRadius="6">
+                        <TextBox Text="{Binding LockMessage}"
+                                 Watermark="Reason for locking..."
+                                 AcceptsReturn="True"
+                                 TextWrapping="Wrap"
+                                 Background="Transparent"
+                                 BorderThickness="0"
+                                 Padding="12,8"
+                                 MinHeight="60"
+                                 FontSize="13"/>
+                    </Border>
+                </StackPanel>
+
+                <!-- Options -->
+                <Border Background="{DynamicResource CardBackgroundBrush}"
+                        BorderBrush="{DynamicResource CardBorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Padding="16">
+                    <Grid ColumnDefinitions="Auto,*">
+                        <CheckBox Grid.Column="0"
+                                  IsChecked="{Binding ForceLock}"
+                                  VerticalAlignment="Top"
+                                  Margin="0,2,12,0"/>
+                        <StackPanel Grid.Column="1" Spacing="2">
+                            <TextBlock Text="Force lock (steal lock)"
+                                       FontSize="13"
+                                       FontWeight="Medium"
+                                       Foreground="{DynamicResource PrimaryTextBrush}"/>
+                            <TextBlock Text="Break existing locks held by other users"
+                                       FontSize="11"
+                                       Foreground="{DynamicResource SecondaryTextBrush}"
+                                       TextWrapping="Wrap"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- Result Panel (shows after operation) -->
+                <Border Background="{DynamicResource CardBackgroundBrush}"
+                        BorderBrush="{DynamicResource CardBorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Padding="16"
+                        IsVisible="{Binding IsCompleted}">
+                    <StackPanel Spacing="8">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <material:MaterialIcon Kind="CheckCircle" Width="20" Height="20"
+                                                   Foreground="#4CAF50"/>
+                            <TextBlock Text="Operation Completed" FontWeight="SemiBold"
+                                       Foreground="{DynamicResource PrimaryTextBrush}"/>
+                        </StackPanel>
+                        <TextBlock Text="{Binding ResultMessage}"
+                                   FontSize="12"
+                                   Foreground="{DynamicResource SecondaryTextBrush}"
+                                   TextWrapping="Wrap"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Error Panel -->
+                <Border Background="#FFF3E0"
+                        BorderBrush="#FF9800"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Padding="16"
+                        IsVisible="{Binding HasError}">
+                    <StackPanel Spacing="8">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <material:MaterialIcon Kind="AlertCircle" Width="20" Height="20"
+                                                   Foreground="#F44336"/>
+                            <TextBlock Text="Error" FontWeight="SemiBold"
+                                       Foreground="#D32F2F"/>
+                        </StackPanel>
+                        <TextBlock Text="{Binding ResultMessage}"
+                                   FontSize="12"
+                                   Foreground="#5D4037"
+                                   TextWrapping="Wrap"/>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Status Bar -->
+        <Border Grid.Row="2" Classes="dialog-status">
+            <Grid ColumnDefinitions="*,Auto">
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12"
+                            IsVisible="{Binding IsLocking}">
+                    <ProgressBar Width="80" Height="3" IsIndeterminate="True"/>
+                    <TextBlock Text="{Binding StatusMessage}"
+                               FontSize="12"
+                               Foreground="{DynamicResource SecondaryTextBrush}"
+                               VerticalAlignment="Center"/>
+                </StackPanel>
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12"
+                            IsVisible="{Binding IsUnlocking}">
+                    <ProgressBar Width="80" Height="3" IsIndeterminate="True"/>
+                    <TextBlock Text="{Binding StatusMessage}"
+                               FontSize="12"
+                               Foreground="{DynamicResource SecondaryTextBrush}"
+                               VerticalAlignment="Center"/>
+                </StackPanel>
+                <TextBlock Grid.Column="0"
+                           Text="{Binding StatusMessage}"
+                           FontSize="12"
+                           Foreground="{DynamicResource SecondaryTextBrush}"
+                           VerticalAlignment="Center"
+                           IsVisible="{Binding CanExecute}"/>
+                <TextBlock Grid.Column="1"
+                           FontSize="12"
+                           Foreground="{DynamicResource SecondaryTextBrush}"
+                           VerticalAlignment="Center">
+                    <Run Text="{Binding SelectedCount}"/>
+                    <Run Text=" file(s) selected"/>
+                </TextBlock>
+            </Grid>
+        </Border>
+
+        <!-- Footer -->
+        <Border Grid.Row="3" Classes="dialog-footer">
+            <Grid ColumnDefinitions="*,Auto,Auto,Auto">
+                <Button Grid.Column="1"
+                        Content="Close"
+                        Command="{Binding CloseCommand}"
+                        Padding="24,8"
+                        Margin="0,0,12,0"/>
+                <Button Grid.Column="2"
+                        Content="Unlock"
+                        Command="{Binding UnlockCommand}"
+                        IsEnabled="{Binding CanExecute}"
+                        Padding="24,8"
+                        Margin="0,0,12,0">
+                    <Button.IsVisible>
+                        <Binding Path="IsCompleted" Converter="{x:Static BoolConverters.Not}"/>
+                    </Button.IsVisible>
+                </Button>
+                <Button Grid.Column="3"
+                        Content="Lock"
+                        Command="{Binding LockCommand}"
+                        IsEnabled="{Binding CanExecute}"
+                        Padding="24,8"
+                        Classes="primary">
+                    <Button.IsVisible>
+                        <Binding Path="IsCompleted" Converter="{x:Static BoolConverters.Not}"/>
+                    </Button.IsVisible>
+                </Button>
+            </Grid>
+        </Border>
+    </Grid>
+
+</Window>

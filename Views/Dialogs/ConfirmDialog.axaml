@@ -1,0 +1,45 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="420" d:DesignHeight="220"
+        x:Class="Svns.Views.Dialogs.ConfirmDialog"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="Confirm"
+        Classes="dialog small"
+        Width="420"
+        MinWidth="350" MinHeight="150"
+        CanResize="False"
+        WindowStartupLocation="CenterOwner">
+
+    <Grid RowDefinitions="*,Auto">
+        <!-- Content -->
+        <StackPanel Grid.Row="0" Classes="dialog-content">
+            <TextBlock x:Name="TitleText"
+                       Text="Confirm Action"
+                       Classes="dialog-title"/>
+            <TextBlock x:Name="MessageText"
+                       Text="Are you sure you want to perform this action?"
+                       FontSize="13"
+                       TextWrapping="Wrap"
+                       Foreground="{DynamicResource SecondaryTextBrush}"
+                       Margin="0,8,0,0"/>
+        </StackPanel>
+
+        <!-- Footer -->
+        <Border Grid.Row="1" Classes="dialog-footer">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Classes="dialog-buttons">
+                <Button x:Name="CancelButton"
+                        Content="Cancel"
+                        Click="OnCancelClick"
+                        Padding="24,10"/>
+                <Button x:Name="ConfirmButton"
+                        Content="Confirm"
+                        Click="OnConfirmClick"
+                        Padding="24,10"
+                        Classes="primary"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+
+</Window>

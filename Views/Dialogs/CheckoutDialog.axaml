@@ -1,0 +1,157 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:Svns.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="550" d:DesignHeight="450"
+        x:Class="Svns.Views.Dialogs.CheckoutDialog"
+        x:DataType="vm:CheckoutViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="{Binding Title}"
+        Classes="dialog medium"
+        Width="550" Height="450"
+        MinWidth="450" MinHeight="350"
+        Background="{DynamicResource AppBackgroundBrush}"
+        WindowStartupLocation="CenterOwner">
+
+    <Grid RowDefinitions="Auto,*,Auto">
+        <!-- Header -->
+        <Border Grid.Row="0" Classes="dialog-header">
+            <StackPanel Spacing="4">
+                <TextBlock Text="{Binding Title}" FontSize="20" FontWeight="SemiBold"
+                           Foreground="{DynamicResource PrimaryTextBrush}"/>
+                <TextBlock Text="{Binding Description}"
+                           FontSize="13"
+                           Foreground="{DynamicResource SecondaryTextBrush}"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Content -->
+        <ScrollViewer Grid.Row="1" Padding="24,16">
+            <StackPanel Spacing="16">
+                <!-- Mode Selection -->
+                <StackPanel Spacing="8">
+                    <TextBlock Text="Mode"
+                               FontSize="13"
+                               FontWeight="SemiBold"
+                               Foreground="{DynamicResource PrimaryTextBrush}"/>
+                    <StackPanel Orientation="Horizontal" Spacing="24">
+                        <RadioButton Content="Checkout (with .svn)"
+                                     IsChecked="{Binding !IsExportMode}"
+                                     GroupName="Mode"/>
+                        <RadioButton Content="Export (clean copy)"
+                                     IsChecked="{Binding IsExportMode}"
+                                     GroupName="Mode"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- Repository URL -->
+                <StackPanel Spacing="8">
+                    <TextBlock Text="Repository URL"
+                               FontSize="13"
+                               FontWeight="SemiBold"
+                               Foreground="{DynamicResource PrimaryTextBrush}"/>
+                    <Border Background="{DynamicResource InputBackgroundBrush}"
+                            BorderBrush="{DynamicResource InputBorderBrush}"
+                            BorderThickness="1"
+                            CornerRadius="6">
+                        <TextBox Text="{Binding RepositoryUrl}"
+                                 Watermark="https://svn.example.com/repo/trunk"
+                                 Background="Transparent"
+                                 BorderThickness="0"
+                                 Padding="12,10"
+                                 FontSize="13"/>
+                    </Border>
+                </StackPanel>
+
+                <!-- Local Path -->
+                <StackPanel Spacing="8">
+                    <TextBlock Text="Local Path"
+                               FontSize="13"
+                               FontWeight="SemiBold"
+                               Foreground="{DynamicResource PrimaryTextBrush}"/>
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Border Grid.Column="0"
+                                Background="{DynamicResource InputBackgroundBrush}"
+                                BorderBrush="{DynamicResource InputBorderBrush}"
+                                BorderThickness="1"
+                                CornerRadius="6">
+                            <TextBox Text="{Binding LocalPath}"
+                                     Watermark="C:\Projects\MyProject"
+                                     Background="Transparent"
+                                     BorderThickness="0"
+                                     Padding="12,10"
+                                     FontSize="13"/>
+                        </Border>
+                        <Button Grid.Column="1"
+                                Content="Browse"
+                                Command="{Binding BrowseLocalPathCommand}"
+                                Padding="16,10"
+                                Margin="8,0,0,0"/>
+                    </Grid>
+                </StackPanel>
+
+                <!-- Revision -->
+                <StackPanel Spacing="8">
+                    <CheckBox Content="Checkout specific revision"
+                              IsChecked="{Binding UseRevision}"/>
+                    <Border Background="{DynamicResource InputBackgroundBrush}"
+                            BorderBrush="{DynamicResource InputBorderBrush}"
+                            BorderThickness="1"
+                            CornerRadius="6"
+                            IsEnabled="{Binding UseRevision}">
+                        <NumericUpDown Value="{Binding Revision}"
+                                       Minimum="1"
+                                       FormatString="0"
+                                       Watermark="Revision number (HEAD if empty)"
+                                       Background="Transparent"
+                                       BorderThickness="0"
+                                       Padding="12,10"
+                                       FontSize="13"/>
+                    </Border>
+                </StackPanel>
+
+                <!-- Progress -->
+                <StackPanel Spacing="8" IsVisible="{Binding IsProcessing}">
+                    <ProgressBar Value="{Binding Progress}"
+                                 Minimum="0"
+                                 Maximum="100"
+                                 Height="4"/>
+                </StackPanel>
+
+                <!-- Status Message -->
+                <TextBlock Text="{Binding StatusMessage}"
+                           FontSize="12"
+                           Foreground="{DynamicResource SecondaryTextBrush}"
+                           IsVisible="{Binding StatusMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Footer -->
+        <Border Grid.Row="2" Classes="dialog-footer">
+            <Grid ColumnDefinitions="*,Auto,Auto">
+                <!-- Loading Indicator -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8"
+                            IsVisible="{Binding IsProcessing}">
+                    <ProgressBar Width="60" Height="3" IsIndeterminate="True"/>
+                    <TextBlock Text="Processing..." FontSize="12"
+                               Foreground="{DynamicResource SecondaryTextBrush}"
+                               VerticalAlignment="Center"/>
+                </StackPanel>
+
+                <Button Grid.Column="1"
+                        Content="Cancel"
+                        Command="{Binding CancelCommand}"
+                        Padding="24,8"
+                        Margin="0,0,12,0"/>
+                <Button Grid.Column="2"
+                        Content="{Binding ActionText}"
+                        Command="{Binding CheckoutCommand}"
+                        IsEnabled="{Binding CanCheckout}"
+                        Padding="24,8"
+                        Classes="primary"/>
+            </Grid>
+        </Border>
+    </Grid>
+
+</Window>

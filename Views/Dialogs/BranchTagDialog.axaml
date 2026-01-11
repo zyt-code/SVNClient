@@ -1,0 +1,144 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:Svns.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="550" d:DesignHeight="580"
+        x:Class="Svns.Views.Dialogs.BranchTagDialog"
+        x:DataType="vm:BranchTagViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="Create Branch/Tag - Svns"
+        Classes="dialog medium"
+        Width="550"
+        Height="580"
+        MinWidth="450" MinHeight="450"
+        WindowStartupLocation="CenterOwner">
+
+    <Grid RowDefinitions="Auto,*,Auto">
+        <!-- Header -->
+        <Border Grid.Row="0" Classes="dialog-header">
+            <StackPanel Spacing="4">
+                <TextBlock Text="Create Branch or Tag" Classes="dialog-title"/>
+                <TextBlock Text="Create a new branch or tag from the current source"
+                           Classes="dialog-subtitle"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Content -->
+        <Border Grid.Row="1" Classes="dialog-content">
+            <ScrollViewer HorizontalScrollBarVisibility="Disabled"
+                          VerticalScrollBarVisibility="Auto">
+                <StackPanel Spacing="14">
+                    <!-- Type Selection -->
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="Type" Classes="dialog-label"/>
+                        <StackPanel Orientation="Horizontal" Spacing="24">
+                            <RadioButton Content="Branch"
+                                         IsChecked="{Binding IsBranch}"
+                                         GroupName="BranchTag"
+                                         FontSize="13"/>
+                            <RadioButton Content="Tag"
+                                         IsChecked="{Binding IsTag}"
+                                         GroupName="BranchTag"
+                                         FontSize="13"/>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!-- Source URL -->
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="Source URL" Classes="dialog-label"/>
+                        <Border Classes="dialog-input">
+                            <TextBlock Text="{Binding SourceUrl}"
+                                       TextTrimming="CharacterEllipsis"
+                                       ToolTip.Tip="{Binding SourceUrl}"/>
+                        </Border>
+                    </StackPanel>
+
+                    <!-- Branch/Tag Name -->
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="Branch Name" Classes="dialog-label"
+                                   IsVisible="{Binding IsBranch}"/>
+                        <TextBlock Text="Tag Name" Classes="dialog-label"
+                                   IsVisible="{Binding IsTag}"/>
+                        <Border Classes="dialog-input">
+                            <TextBox Text="{Binding BranchName}"
+                                     Watermark="Enter name..."/>
+                        </Border>
+                    </StackPanel>
+
+                    <!-- Destination URL Preview -->
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="Destination URL" Classes="dialog-label"/>
+                        <Border Classes="dialog-input">
+                            <TextBlock Text="{Binding DestinationUrl}"
+                                       TextTrimming="CharacterEllipsis"
+                                       ToolTip.Tip="{Binding DestinationUrl}"/>
+                        </Border>
+                    </StackPanel>
+
+                    <!-- Commit Message -->
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="Message" Classes="dialog-label"/>
+                        <Border Classes="dialog-input">
+                            <TextBox Text="{Binding Message}"
+                                     AcceptsReturn="True"
+                                     TextWrapping="Wrap"
+                                     Watermark="Enter commit message..."
+                                     MinHeight="80"/>
+                        </Border>
+                    </StackPanel>
+
+                    <!-- Status Message (Error/Info) -->
+                    <Border IsVisible="{Binding StatusMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                            Background="#2A1818"
+                            BorderBrush="#E57373"
+                            BorderThickness="1"
+                            CornerRadius="6"
+                            Padding="12,10"
+                            MaxHeight="150">
+                        <ScrollViewer HorizontalScrollBarVisibility="Disabled"
+                                      VerticalScrollBarVisibility="Auto">
+                            <StackPanel Spacing="6">
+                                <TextBlock Text="⚠"
+                                           FontSize="12"
+                                           Foreground="#E57373"/>
+                                <TextBlock Text="{Binding StatusMessage}"
+                                           FontSize="12"
+                                           TextWrapping="Wrap"
+                                           Foreground="#FFCDD2"
+                                           LineHeight="16"/>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+
+        <!-- Footer -->
+        <Border Grid.Row="2" Classes="dialog-footer">
+            <Grid ColumnDefinitions="*,Auto,Auto">
+                <!-- Loading Indicator -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8"
+                            IsVisible="{Binding IsProcessing}">
+                    <ProgressBar Width="60" Height="3" IsIndeterminate="True"/>
+                    <TextBlock Text="Creating..." FontSize="12"
+                               Foreground="{DynamicResource SecondaryTextBrush}"
+                               VerticalAlignment="Center"/>
+                </StackPanel>
+
+                <Button Grid.Column="1"
+                        Content="Cancel"
+                        Command="{Binding CancelCommand}"
+                        Padding="24,10"
+                        Margin="0,0,12,0"/>
+                <Button Grid.Column="2"
+                        Content="Create"
+                        Command="{Binding CreateCommand}"
+                        IsEnabled="{Binding CanCreate}"
+                        Padding="24,10"
+                        Classes="primary"/>
+            </Grid>
+        </Border>
+    </Grid>
+
+</Window>

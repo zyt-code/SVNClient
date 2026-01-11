@@ -1,0 +1,184 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:Svns.ViewModels"
+        xmlns:converters="using:Svns.Converters"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="650" d:DesignHeight="550"
+        x:Class="Svns.Views.Dialogs.ConflictResolveDialog"
+        x:DataType="vm:ConflictResolveViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="Resolve Conflicts - Svns"
+        Classes="dialog medium"
+        Width="650" Height="550"
+        MinWidth="550" MinHeight="450"
+        Background="{DynamicResource AppBackgroundBrush}"
+        WindowStartupLocation="CenterOwner">
+
+    <Window.Resources>
+        <converters:BoolToStringConverter x:Key="BoolToStringConverter"/>
+        <converters:BoolToBrushConverter x:Key="BoolToBrushConverter"/>
+    </Window.Resources>
+
+    <Grid RowDefinitions="Auto,*,Auto,Auto">
+        <!-- Header -->
+        <Border Grid.Row="0" Classes="dialog-header">
+            <StackPanel Spacing="4">
+                <TextBlock Text="Resolve Conflicts" FontSize="20" FontWeight="SemiBold"
+                           Foreground="{DynamicResource PrimaryTextBrush}"/>
+                <TextBlock Text="Choose how to resolve each conflicted file"
+                           FontSize="13"
+                           Foreground="{DynamicResource SecondaryTextBrush}"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Content -->
+        <Grid Grid.Row="1" ColumnDefinitions="*,Auto" Margin="24,16">
+            <!-- Conflict List -->
+            <Border Grid.Column="0"
+                    Background="{DynamicResource CardBackgroundBrush}"
+                    BorderBrush="{DynamicResource CardBorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Margin="0,0,16,0">
+                <ListBox ItemsSource="{Binding Conflicts}"
+                         SelectedItem="{Binding SelectedConflict}"
+                         Background="Transparent"
+                         Padding="4">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Border Padding="12,8"
+                                    Background="Transparent"
+                                    CornerRadius="4">
+                                <Grid ColumnDefinitions="Auto,*,Auto">
+                                    <!-- Status Icon -->
+                                    <TextBlock Grid.Column="0"
+                                               Text="{Binding IsResolved, Converter={StaticResource BoolToStringConverter}, ConverterParameter='✓;⚠'}"
+                                               Foreground="{Binding IsResolved, Converter={StaticResource BoolToBrushConverter}, ConverterParameter='Green;Orange'}"
+                                               FontSize="14"
+                                               Margin="0,0,12,0"
+                                               VerticalAlignment="Center"/>
+
+                                    <!-- File Name -->
+                                    <StackPanel Grid.Column="1" Spacing="2">
+                                        <TextBlock Text="{Binding Name}"
+                                                   FontSize="13"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="{DynamicResource PrimaryTextBrush}"/>
+                                        <TextBlock Text="{Binding Path}"
+                                                   FontSize="11"
+                                                   Foreground="{DynamicResource SecondaryTextBrush}"
+                                                   TextTrimming="CharacterEllipsis"/>
+                                    </StackPanel>
+
+                                    <!-- Status Badge -->
+                                    <Border Grid.Column="2"
+                                            Background="{Binding IsResolved, Converter={StaticResource BoolToBrushConverter}, ConverterParameter='#22C55E;#F59E0B'}"
+                                            CornerRadius="3"
+                                            Padding="6,2"
+                                            VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding IsResolved, Converter={StaticResource BoolToStringConverter}, ConverterParameter='Resolved;Conflicted'}"
+                                                   FontSize="10"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="White"/>
+                                    </Border>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Border>
+
+            <!-- Resolution Actions -->
+            <StackPanel Grid.Column="1" Spacing="8" Width="180">
+                <TextBlock Text="Resolve Selected"
+                           FontSize="13"
+                           FontWeight="SemiBold"
+                           Foreground="{DynamicResource PrimaryTextBrush}"
+                           Margin="0,0,0,8"/>
+
+                <Button Content="Use Mine"
+                        Command="{Binding ResolveWithMineCommand}"
+                        HorizontalAlignment="Stretch"
+                        Padding="12,8"
+                        ToolTip.Tip="Keep your local changes"/>
+
+                <Button Content="Use Theirs"
+                        Command="{Binding ResolveWithTheirsCommand}"
+                        HorizontalAlignment="Stretch"
+                        Padding="12,8"
+                        ToolTip.Tip="Use the incoming changes"/>
+
+                <Button Content="Use Working"
+                        Command="{Binding ResolveWithWorkingCommand}"
+                        HorizontalAlignment="Stretch"
+                        Padding="12,8"
+                        ToolTip.Tip="Use working copy as-is"/>
+
+                <Button Content="Use Base"
+                        Command="{Binding ResolveWithBaseCommand}"
+                        HorizontalAlignment="Stretch"
+                        Padding="12,8"
+                        ToolTip.Tip="Use the base version"/>
+
+                <Separator Margin="0,8"/>
+
+                <TextBlock Text="Resolve All"
+                           FontSize="13"
+                           FontWeight="SemiBold"
+                           Foreground="{DynamicResource PrimaryTextBrush}"
+                           Margin="0,8,0,8"/>
+
+                <Button Content="All Mine"
+                        Command="{Binding ResolveAllWithMineCommand}"
+                        HorizontalAlignment="Stretch"
+                        Padding="12,8"/>
+
+                <Button Content="All Theirs"
+                        Command="{Binding ResolveAllWithTheirsCommand}"
+                        HorizontalAlignment="Stretch"
+                        Padding="12,8"/>
+            </StackPanel>
+        </Grid>
+
+        <!-- Status Bar -->
+        <Border Grid.Row="2" Classes="dialog-status">
+            <Grid ColumnDefinitions="*,Auto">
+                <TextBlock Grid.Column="0"
+                           Text="{Binding StatusMessage}"
+                           FontSize="12"
+                           Foreground="{DynamicResource SecondaryTextBrush}"
+                           VerticalAlignment="Center"/>
+                <TextBlock Grid.Column="1"
+                           FontSize="12"
+                           Foreground="{DynamicResource SecondaryTextBrush}"
+                           VerticalAlignment="Center">
+                    <Run Text="{Binding ResolvedCount}"/>
+                    <Run Text=" / "/>
+                    <Run Text="{Binding TotalCount}"/>
+                    <Run Text=" resolved"/>
+                </TextBlock>
+            </Grid>
+        </Border>
+
+        <!-- Footer -->
+        <Border Grid.Row="3" Classes="dialog-footer">
+            <Grid ColumnDefinitions="*,Auto">
+                <!-- Loading Indicator -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8"
+                            IsVisible="{Binding IsProcessing}">
+                    <ProgressBar Width="60" Height="3" IsIndeterminate="True"/>
+                    <TextBlock Text="Resolving..." FontSize="12"
+                               Foreground="{DynamicResource SecondaryTextBrush}"
+                               VerticalAlignment="Center"/>
+                </StackPanel>
+
+                <Button Grid.Column="1"
+                        Content="Close"
+                        Command="{Binding CloseCommand}"
+                        Padding="24,8"/>
+            </Grid>
+        </Border>
+    </Grid>
+
+</Window>

@@ -1,0 +1,300 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:Svns.ViewModels"
+        xmlns:material="using:Material.Icons.Avalonia"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="500"
+        x:Class="Svns.Views.SettingsWindow"
+        x:DataType="vm:SettingsViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="Settings - Svns"
+        Width="600" Height="500"
+        MinWidth="500" MinHeight="450"
+        Background="{DynamicResource AppBackgroundBrush}"
+        WindowStartupLocation="CenterOwner">
+
+    <Design.DataContext>
+        <vm:SettingsViewModel/>
+    </Design.DataContext>
+
+    <Grid RowDefinitions="Auto,*,Auto">
+        <!-- Header -->
+        <Border Grid.Row="0"
+                Background="{DynamicResource AppSecondaryBackgroundBrush}"
+                BorderBrush="{DynamicResource SidebarBorderBrush}"
+                BorderThickness="0,0,0,1"
+                Padding="24,16">
+            <StackPanel Orientation="Horizontal" Spacing="12">
+                <material:MaterialIcon Kind="Cog" Width="28" Height="28"
+                                       Foreground="{DynamicResource AccentBrush}"/>
+                <StackPanel Spacing="4">
+                    <TextBlock Text="Settings" FontSize="20" FontWeight="SemiBold"
+                               Foreground="{DynamicResource PrimaryTextBrush}"/>
+                    <TextBlock Text="Configure your SVN client preferences"
+                               FontSize="13"
+                               Foreground="{DynamicResource SecondaryTextBrush}"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <!-- Content -->
+        <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Disabled">
+            <StackPanel Margin="24" Spacing="24">
+                <!-- Theme Section -->
+                <Border Background="{DynamicResource CardBackgroundBrush}"
+                        BorderBrush="{DynamicResource CardBorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Padding="20">
+                    <StackPanel Spacing="16">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <material:MaterialIcon Kind="Palette" Width="20" Height="20"
+                                                   Foreground="{DynamicResource AccentBrush}"/>
+                            <TextBlock Text="Appearance" FontSize="14" FontWeight="SemiBold"
+                                       Foreground="{DynamicResource PrimaryTextBrush}"/>
+                        </StackPanel>
+
+                        <!-- Theme Selection -->
+                        <StackPanel Spacing="8">
+                            <TextBlock Text="Theme" FontSize="13"
+                                       Foreground="{DynamicResource SecondaryTextBrush}"/>
+                            <StackPanel Orientation="Horizontal" Spacing="12">
+                                <!-- Light Theme -->
+                                <Button x:Name="LightThemeButton"
+                                        Click="OnLightThemeClick"
+                                        Background="{DynamicResource AppSecondaryBackgroundBrush}"
+                                        BorderThickness="2"
+                                        CornerRadius="8"
+                                        Padding="16,12"
+                                        Width="140">
+                                    <StackPanel Spacing="8" HorizontalAlignment="Center">
+                                        <Border Background="White" BorderBrush="#E0E0E0"
+                                                BorderThickness="1" CornerRadius="4" Width="40" Height="24">
+                                            <material:MaterialIcon Kind="WeatherSunny" Width="14" Height="14"
+                                                                   Foreground="#FFA000"
+                                                                   HorizontalAlignment="Center"
+                                                                   VerticalAlignment="Center"/>
+                                        </Border>
+                                        <TextBlock Text="Light" FontSize="12" FontWeight="Medium"
+                                                   Foreground="{DynamicResource PrimaryTextBrush}"
+                                                   HorizontalAlignment="Center"/>
+                                    </StackPanel>
+                                </Button>
+
+                                <!-- Dark Theme -->
+                                <Button x:Name="DarkThemeButton"
+                                        Click="OnDarkThemeClick"
+                                        Background="{DynamicResource AppSecondaryBackgroundBrush}"
+                                        BorderThickness="2"
+                                        CornerRadius="8"
+                                        Padding="16,12"
+                                        Width="140">
+                                    <StackPanel Spacing="8" HorizontalAlignment="Center">
+                                        <Border Background="#1E1E1E" BorderBrush="#3C3C3C"
+                                                BorderThickness="1" CornerRadius="4" Width="40" Height="24">
+                                            <material:MaterialIcon Kind="WeatherNight" Width="14" Height="14"
+                                                                   Foreground="#90CAF9"
+                                                                   HorizontalAlignment="Center"
+                                                                   VerticalAlignment="Center"/>
+                                        </Border>
+                                        <TextBlock Text="Dark" FontSize="12" FontWeight="Medium"
+                                                   Foreground="{DynamicResource PrimaryTextBrush}"
+                                                   HorizontalAlignment="Center"/>
+                                    </StackPanel>
+                                </Button>
+
+                                <!-- System Theme -->
+                                <Button x:Name="SystemThemeButton"
+                                        Click="OnSystemThemeClick"
+                                        Background="{DynamicResource AppSecondaryBackgroundBrush}"
+                                        BorderThickness="2"
+                                        CornerRadius="8"
+                                        Padding="16,12"
+                                        Width="140">
+                                    <StackPanel Spacing="8" HorizontalAlignment="Center">
+                                        <Border CornerRadius="4" Width="40" Height="24">
+                                            <Border.Background>
+                                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                                    <GradientStop Color="White" Offset="0"/>
+                                                    <GradientStop Color="#1E1E1E" Offset="1"/>
+                                                </LinearGradientBrush>
+                                            </Border.Background>
+                                            <material:MaterialIcon Kind="Monitor" Width="14" Height="14"
+                                                                   Foreground="#888"
+                                                                   HorizontalAlignment="Center"
+                                                                   VerticalAlignment="Center"/>
+                                        </Border>
+                                        <TextBlock Text="System" FontSize="12" FontWeight="Medium"
+                                                   Foreground="{DynamicResource PrimaryTextBrush}"
+                                                   HorizontalAlignment="Center"/>
+                                    </StackPanel>
+                                </Button>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <!-- Language Selection -->
+                        <StackPanel Spacing="8" Margin="0,12,0,0">
+                            <TextBlock Text="Language / 语言" FontSize="13"
+                                       Foreground="{DynamicResource SecondaryTextBrush}"/>
+                            <Grid ColumnDefinitions="*,Auto">
+                                <ComboBox Grid.Column="0"
+                                          ItemsSource="{Binding AvailableLanguages}"
+                                          SelectedValue="{Binding SelectedLanguage}"
+                                          SelectedValueBinding="{Binding Code}"
+                                          Background="{DynamicResource InputBackgroundBrush}"
+                                          BorderBrush="{DynamicResource InputBorderBrush}"
+                                          BorderThickness="1"
+                                          CornerRadius="6"
+                                          Padding="12,8"
+                                          FontSize="13"
+                                          MinWidth="200"/>
+                                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6"
+                                            Margin="12,0,0,0"
+                                            IsVisible="{Binding LanguageChangePending}">
+                                    <material:MaterialIcon Kind="Information" Width="16" Height="16"
+                                                           Foreground="{DynamicResource WarningBrush}"/>
+                                    <TextBlock Text="Restart recommended"
+                                               FontSize="12"
+                                               Foreground="{DynamicResource WarningBrush}"
+                                               VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Grid>
+                            <TextBlock Text="Select display language. Changes take effect immediately, but a restart is recommended for full effect."
+                                       FontSize="11"
+                                       Foreground="{DynamicResource SecondaryTextBrush}"
+                                       TextWrapping="Wrap"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- SVN Section -->
+                <Border Background="{DynamicResource CardBackgroundBrush}"
+                        BorderBrush="{DynamicResource CardBorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Padding="20">
+                    <StackPanel Spacing="16">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <material:MaterialIcon Kind="SourceBranch" Width="20" Height="20"
+                                                   Foreground="{DynamicResource AccentBrush}"/>
+                            <TextBlock Text="SVN Configuration" FontSize="14" FontWeight="SemiBold"
+                                       Foreground="{DynamicResource PrimaryTextBrush}"/>
+                        </StackPanel>
+
+                        <!-- SVN Path -->
+                        <StackPanel Spacing="8">
+                            <TextBlock Text="SVN Executable Path" FontSize="13"
+                                       Foreground="{DynamicResource SecondaryTextBrush}"/>
+                            <Grid ColumnDefinitions="*,Auto">
+                                <TextBox Grid.Column="0"
+                                         Text="{Binding SvnPath}"
+                                         Watermark="svn"
+                                         Background="{DynamicResource InputBackgroundBrush}"
+                                         BorderBrush="{DynamicResource InputBorderBrush}"
+                                         BorderThickness="1"
+                                         CornerRadius="6"
+                                         Padding="12,8"
+                                         FontSize="13"/>
+                                <Button Grid.Column="1"
+                                        Click="OnBrowseSvnPathClick"
+                                        Margin="8,0,0,0"
+                                        Padding="16,8"
+                                        Classes="primary">
+                                    <StackPanel Orientation="Horizontal" Spacing="6">
+                                        <material:MaterialIcon Kind="FolderOpen" Width="16" Height="16"/>
+                                        <TextBlock Text="Browse"/>
+                                    </StackPanel>
+                                </Button>
+                            </Grid>
+                            <TextBlock Text="Path to the SVN command-line executable (e.g., svn or C:\Program Files\TortoiseSVN\bin\svn.exe)"
+                                       FontSize="11"
+                                       Foreground="{DynamicResource SecondaryTextBrush}"
+                                       TextWrapping="Wrap"/>
+                        </StackPanel>
+
+                        <!-- Default Repository URL -->
+                        <StackPanel Spacing="8">
+                            <TextBlock Text="Default Repository URL" FontSize="13"
+                                       Foreground="{DynamicResource SecondaryTextBrush}"/>
+                            <TextBox Text="{Binding DefaultRepositoryUrl}"
+                                     Watermark="https://svn.example.com/repos"
+                                     Background="{DynamicResource InputBackgroundBrush}"
+                                     BorderBrush="{DynamicResource InputBorderBrush}"
+                                     BorderThickness="1"
+                                     CornerRadius="6"
+                                     Padding="12,8"
+                                     FontSize="13"/>
+                            <TextBlock Text="Default repository URL for new checkouts"
+                                       FontSize="11"
+                                       Foreground="{DynamicResource SecondaryTextBrush}"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- About Section -->
+                <Border Background="{DynamicResource CardBackgroundBrush}"
+                        BorderBrush="{DynamicResource CardBorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Padding="20">
+                    <StackPanel Spacing="12">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <material:MaterialIcon Kind="InformationOutline" Width="20" Height="20"
+                                                   Foreground="{DynamicResource AccentBrush}"/>
+                            <TextBlock Text="About Svns" FontSize="14" FontWeight="SemiBold"
+                                       Foreground="{DynamicResource PrimaryTextBrush}"/>
+                        </StackPanel>
+                        <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto" Margin="0,8,0,0">
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Version:"
+                                       Foreground="{DynamicResource SecondaryTextBrush}"
+                                       Margin="0,0,0,4"/>
+                            <TextBlock Grid.Row="0" Grid.Column="1" Text="1.0.0"
+                                       Foreground="{DynamicResource PrimaryTextBrush}"
+                                       FontWeight="Medium"
+                                       Margin="12,0,0,4"/>
+
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Framework:"
+                                       Foreground="{DynamicResource SecondaryTextBrush}"
+                                       Margin="0,0,0,4"/>
+                            <TextBlock Grid.Row="1" Grid.Column="1" Text="Avalonia UI 11.3 / .NET 9"
+                                       Foreground="{DynamicResource PrimaryTextBrush}"
+                                       FontWeight="Medium"
+                                       Margin="12,0,0,4"/>
+
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="License:"
+                                       Foreground="{DynamicResource SecondaryTextBrush}"/>
+                            <TextBlock Grid.Row="2" Grid.Column="1" Text="MIT"
+                                       Foreground="{DynamicResource PrimaryTextBrush}"
+                                       FontWeight="Medium"
+                                       Margin="12,0,0,0"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Footer -->
+        <Border Grid.Row="2"
+                Background="{DynamicResource AppSecondaryBackgroundBrush}"
+                BorderBrush="{DynamicResource SidebarBorderBrush}"
+                BorderThickness="0,1,0,0"
+                Padding="24,16">
+            <Grid ColumnDefinitions="*,Auto">
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                    <material:MaterialIcon Kind="Check" Width="16" Height="16"
+                                           Foreground="{DynamicResource AddedBrush}"/>
+                    <TextBlock Text="Changes are saved automatically"
+                               FontSize="12"
+                               Foreground="{DynamicResource SecondaryTextBrush}"/>
+                </StackPanel>
+                <Button Grid.Column="1"
+                        Content="Close"
+                        Click="OnCloseClick"
+                        Padding="24,8"
+                        Classes="primary"/>
+            </Grid>
+        </Border>
+    </Grid>
+
+</Window>

@@ -1,0 +1,862 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:Svns.ViewModels"
+        xmlns:models="using:Svns.Models"
+        xmlns:converters="using:Svns.Converters"
+        xmlns:material="using:Material.Icons.Avalonia"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="700"
+        x:Class="Svns.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="Svns - SVN Client"
+        MinWidth="1000" MinHeight="600"
+        Background="{DynamicResource AppBackgroundBrush}">
+
+    <Design.DataContext>
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
+
+    <Window.Resources>
+        <converters:SvnStatusToIconConverter x:Key="StatusToIconConverter"/>
+        <converters:SvnStatusToColorConverter x:Key="StatusToColorConverter"/>
+        <converters:SvnStatusToStringConverter x:Key="StatusToStringConverter"/>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+        <converters:InverseBoolConverter x:Key="InverseBoolConverter"/>
+        <converters:FilePathToFileNameConverter x:Key="FileNameConverter"/>
+        <converters:SvnPathActionToColorConverter x:Key="PathActionToColorConverter"/>
+        <converters:SvnPathActionToStringConverter x:Key="PathActionToStringConverter"/>
+        <converters:FileTypeToIconConverter x:Key="FileTypeToIconConverter"/>
+        <converters:IntToVisibilityConverter x:Key="IntToVisibilityConverter"/>
+    </Window.Resources>
+
+    <Grid RowDefinitions="Auto,*,Auto">
+        <!-- ==============================================
+             Notification Center Sidebar (Right)
+             ============================================== -->
+        <Border Grid.Row="0" Grid.RowSpan="3"
+                Background="{DynamicResource SidebarBackgroundBrush}"
+                BorderBrush="{DynamicResource SidebarBorderBrush}"
+                BorderThickness="1,0,0,0"
+                Width="320"
+                HorizontalAlignment="Right"
+                IsVisible="{Binding ShowNotificationCenter}"
+                ZIndex="1000">
+            <Grid RowDefinitions="Auto,Auto,*">
+                <!-- Header -->
+                <Border Grid.Row="0"
+                        Padding="16,14,16,10"
+                        BorderBrush="{DynamicResource SidebarBorderBrush}"
+                        BorderThickness="0,0,0,1">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <StackPanel Grid.Column="0" Spacing="2">
+                            <TextBlock Text="Notifications" FontSize="14" FontWeight="SemiBold"
+                                       Foreground="{DynamicResource PrimaryTextBrush}"/>
+                            <TextBlock Text="{Binding Notifications.Notifications.Count, StringFormat='{}{0} messages'}"
+                                       FontSize="10" Foreground="{DynamicResource SecondaryTextBrush}"/>
+                        </StackPanel>
+                        <Button Grid.Column="1"
+                                Command="{Binding ToggleNotificationCenterCommand}"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                Padding="6"
+                                CornerRadius="4"
+                                ToolTip.Tip="Close">
+                            <material:MaterialIcon Kind="Close" Width="16" Height="16"
+                                                   Foreground="{DynamicResource SecondaryTextBrush}"/>
+                        </Button>
+                    </Grid>
+                </Border>
+
+                <!-- Actions -->
+                <Border Grid.Row="1"
+                        Padding="12,10"
+                        BorderBrush="{DynamicResource SidebarBorderBrush}"
+                        BorderThickness="0,0,0,1">
+                    <StackPanel Spacing="8" Orientation="Horizontal">
+                        <Button Command="{Binding MarkAllNotificationsAsReadCommand}"
+                                HorizontalAlignment="Left"
+                                Padding="10,6"
+                                CornerRadius="6"
+                                FontSize="12">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <material:MaterialIcon Kind="CheckAll" Width="14" Height="14"/>
+                                <TextBlock Text="Mark all read"/>
+                            </StackPanel>
+                        </Button>
+                        <Button Command="{Binding ClearAllNotificationsCommand}"
+                                HorizontalAlignment="Left"
+                                Padding="10,6"
+                                CornerRadius="6"
+                                FontSize="12">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <material:MaterialIcon Kind="DeleteSweep" Width="14" Height="14"/>
+                                <TextBlock Text="Clear all"/>
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </Border>
+
+                <!-- Notifications List -->
+                <ScrollViewer Grid.Row="2" Padding="0">
+                    <ItemsControl ItemsSource="{Binding Notifications.Notifications}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="{DynamicResource CardBackgroundBrush}"
+                                        BorderBrush="{DynamicResource CardBorderBrush}"
+                                        BorderThickness="0,0,0,1"
+                                        Padding="12,10"
+                                        Margin="0">
+                                    <Grid RowDefinitions="Auto,Auto,Auto">
+                                        <!-- Header -->
+                                        <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto">
+                                            <!-- Icon -->
+                                            <material:MaterialIcon Grid.Column="0"
+                                                                   Kind="{Binding IconKind}"
+                                                                   Width="18" Height="18"
+                                                                   Margin="0,0,10,0"
+                                                                   VerticalAlignment="Center">
+                                                <material:MaterialIcon.Foreground>
+                                                    <SolidColorBrush Color="{Binding Color}"/>
+                                                </material:MaterialIcon.Foreground>
+                                            </material:MaterialIcon>
+
+                                            <!-- Title -->
+                                            <TextBlock Grid.Column="1"
+                                                       Text="{Binding Title}"
+                                                       FontSize="13"
+                                                       FontWeight="SemiBold"
+                                                       Foreground="{DynamicResource PrimaryTextBrush}"
+                                                       TextTrimming="CharacterEllipsis"
+                                                       VerticalAlignment="Center"/>
+
+                                            <!-- Time -->
+                                            <TextBlock Grid.Column="2"
+                                                       Text="{Binding Timestamp, StringFormat='{}{0:HH:mm}'}"
+                                                       FontSize="10"
+                                                       Foreground="{DynamicResource DisabledTextBrush}"
+                                                       VerticalAlignment="Center"/>
+                                        </Grid>
+
+                                        <!-- Message -->
+                                        <TextBlock Grid.Row="1"
+                                                   Text="{Binding Message}"
+                                                   FontSize="12"
+                                                   Foreground="{DynamicResource SecondaryTextBrush}"
+                                                   TextWrapping="Wrap"
+                                                   Margin="28,4,0,0"/>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Grid>
+        </Border>
+        <!-- ==============================================
+             Menu Bar
+             ============================================== -->
+        <Border Grid.Row="0"
+                Background="{DynamicResource AppSecondaryBackgroundBrush}"
+                BorderBrush="{DynamicResource SidebarBorderBrush}"
+                BorderThickness="0,0,0,1"
+                Padding="12,0">
+            <Menu Classes="modern" Background="Transparent" Padding="0">
+                <MenuItem Header="File" Margin="0,4,8,4">
+                    <MenuItem Header="Back to Welcome" Click="OnBackToWelcomeClick">
+                        <MenuItem.Icon>
+                            <material:MaterialIcon Kind="Home" Width="16" Height="16" Foreground="{DynamicResource PrimaryTextBrush}"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <Separator/>
+                    <MenuItem Header="Settings..." Click="OnSettingsClick">
+                        <MenuItem.Icon>
+                            <material:MaterialIcon Kind="Cog" Width="16" Height="16" Foreground="{DynamicResource PrimaryTextBrush}"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                </MenuItem>
+
+                <MenuItem Header="SVN" Margin="8,4,8,4">
+                    <MenuItem Header="Update" Command="{Binding UpdateCommand}" InputGesture="Ctrl+T">
+                        <MenuItem.Icon>
+                            <material:MaterialIcon Kind="Download" Width="16" Height="16"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="Commit..." Command="{Binding CommitCommand}" InputGesture="Ctrl+K">
+                        <MenuItem.Icon>
+                            <material:MaterialIcon Kind="Upload" Width="16" Height="16"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <Separator/>
+                    <MenuItem Header="Refresh" Command="{Binding RefreshCommand}" InputGesture="F5">
+                        <MenuItem.Icon>
+                            <material:MaterialIcon Kind="Refresh" Width="16" Height="16"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="Cleanup..." Command="{Binding CleanupCommand}">
+                        <MenuItem.Icon>
+                            <material:MaterialIcon Kind="Broom" Width="16" Height="16"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <Separator/>
+                    <MenuItem Header="Resolve Conflicts..." Command="{Binding ResolveConflictsCommand}">
+                        <MenuItem.Icon>
+                            <material:MaterialIcon Kind="AlertCircle" Width="16" Height="16"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                </MenuItem>
+
+                <MenuItem Header="Branch" Margin="8,4,8,4">
+                    <MenuItem Header="Create Branch/Tag..." Command="{Binding BranchTagCommand}">
+                        <MenuItem.Icon>
+                            <material:MaterialIcon Kind="SourceBranch" Width="16" Height="16"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="Switch..." Command="{Binding SwitchCommand}">
+                        <MenuItem.Icon>
+                            <material:MaterialIcon Kind="SwapHorizontal" Width="16" Height="16"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="Merge..." Command="{Binding MergeCommand}">
+                        <MenuItem.Icon>
+                            <material:MaterialIcon Kind="SourceMerge" Width="16" Height="16"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                </MenuItem>
+
+                <MenuItem Header="Repository" Margin="8,4,8,4">
+                    <MenuItem Header="Checkout..." Command="{Binding CheckoutCommand}">
+                        <MenuItem.Icon>
+                            <material:MaterialIcon Kind="CloudDownload" Width="16" Height="16"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="Import..." Command="{Binding ImportCommand}">
+                        <MenuItem.Icon>
+                            <material:MaterialIcon Kind="Import" Width="16" Height="16"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <Separator/>
+                    <MenuItem Header="Browse Repository..." Command="{Binding BrowseRepositoryCommand}">
+                        <MenuItem.Icon>
+                            <material:MaterialIcon Kind="FolderNetwork" Width="16" Height="16"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <Separator/>
+                    <MenuItem Header="Relocate..." Command="{Binding RelocateCommand}">
+                        <MenuItem.Icon>
+                            <material:MaterialIcon Kind="LinkVariant" Width="16" Height="16"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                </MenuItem>
+
+                <MenuItem Header="Help" Margin="8,4,0,4">
+                    <MenuItem Header="About" Click="OnAboutClick">
+                        <MenuItem.Icon>
+                            <material:MaterialIcon Kind="InformationOutline" Width="16" Height="16"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                </MenuItem>
+            </Menu>
+        </Border>
+
+        <!-- ==============================================
+             Main Content Area
+             ============================================== -->
+        <Grid Grid.Row="1" ColumnDefinitions="280,8,*,8,300">
+            <!-- ==============================================
+                 Left Panel - Working Copy Info
+                 ============================================== -->
+            <Border Grid.Column="0"
+                    Background="{DynamicResource SidebarBackgroundBrush}"
+                    BorderBrush="{DynamicResource SidebarBorderBrush}"
+                    BorderThickness="0,0,1,0">
+                <Grid RowDefinitions="Auto,Auto,Auto,Auto,*">
+                    <!-- Panel Header -->
+                    <Border Grid.Row="0" Padding="20,16,20,12">
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Working Copy" Classes="heading"/>
+                            <TextBlock Text="{Binding WorkingCopyInfo.DisplayName}"
+                                       Classes="caption"
+                                       TextTrimming="CharacterEllipsis"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Branch & Revision Info -->
+                    <Border Grid.Row="1" Padding="20,12,20,12">
+                        <StackPanel Spacing="8">
+                            <Grid ColumnDefinitions="Auto,*">
+                                <TextBlock Grid.Column="0" Text="Branch" Classes="caption" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="1" Text="{Binding CurrentBranch}" FontWeight="SemiBold"
+                                           Classes="body" Margin="12,0,0,0" VerticalAlignment="Center"/>
+                            </Grid>
+                            <Grid ColumnDefinitions="Auto,*">
+                                <TextBlock Grid.Column="0" Text="Revision" Classes="caption" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="1" Text="{Binding CurrentRevision, StringFormat='r{0}'}" FontWeight="SemiBold"
+                                           Classes="body" Margin="12,0,0,0" VerticalAlignment="Center"/>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Grid.Row="2" Height="1"
+                            Background="{DynamicResource SidebarBorderBrush}"
+                            Margin="16,0"/>
+
+                    <!-- SVN Info -->
+                    <StackPanel Grid.Row="3" Margin="16,12" Spacing="8">
+                        <TextBlock Text="SVN Info" FontSize="12" FontWeight="SemiBold"
+                                   Foreground="{DynamicResource SecondaryTextBrush}"/>
+                        <Grid ColumnDefinitions="Auto,*">
+                            <TextBlock Grid.Column="0" Text="URL" Classes="caption" Width="80"/>
+                            <TextBlock Grid.Column="1" Text="{Binding WorkingCopyInfo.RepositoryUrl}"
+                                       Classes="caption" TextTrimming="CharacterEllipsis"
+                                       ToolTip.Tip="{Binding WorkingCopyInfo.RepositoryUrl}"/>
+                        </Grid>
+                        <Grid ColumnDefinitions="Auto,*">
+                            <TextBlock Grid.Column="0" Text="Root" Classes="caption" Width="80"/>
+                            <TextBlock Grid.Column="1" Text="{Binding WorkingCopyInfo.RepositoryRoot}"
+                                       Classes="caption" TextTrimming="CharacterEllipsis"
+                                       ToolTip.Tip="{Binding WorkingCopyInfo.RepositoryRoot}"/>
+                        </Grid>
+                        <Grid ColumnDefinitions="Auto,*">
+                            <TextBlock Grid.Column="0" Text="Last Author" Classes="caption" Width="80"/>
+                            <TextBlock Grid.Column="1" Text="{Binding WorkingCopyInfo.LastChangedAuthor}"
+                                       Classes="body" FontWeight="SemiBold"/>
+                        </Grid>
+                        <Grid ColumnDefinitions="Auto,*">
+                            <TextBlock Grid.Column="0" Text="Last Date" Classes="caption" Width="80"/>
+                            <TextBlock Grid.Column="1" Text="{Binding WorkingCopyInfo.LastChangedDate, StringFormat='{}{0:yyyy-MM-dd HH:mm}'}"
+                                       Classes="caption"/>
+                        </Grid>
+                        <Grid ColumnDefinitions="Auto,*">
+                            <TextBlock Grid.Column="0" Text="Last Rev" Classes="caption" Width="80"/>
+                            <TextBlock Grid.Column="1" Text="{Binding WorkingCopyInfo.LastChangedRevision, StringFormat='r{0}'}"
+                                       Classes="body" FontWeight="SemiBold"/>
+                        </Grid>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Grid Splitter -->
+            <GridSplitter Grid.Column="1" ResizeDirection="Columns" Background="Transparent" Width="8"/>
+
+            <!-- ==============================================
+                 Center Panel - File Tree
+                 ============================================== -->
+            <Grid Grid.Column="2">
+                <!-- Toolbar -->
+                <Border VerticalAlignment="Top"
+                        Background="{DynamicResource AppSecondaryBackgroundBrush}"
+                        BorderBrush="{DynamicResource SidebarBorderBrush}"
+                        BorderThickness="0,0,0,1"
+                        Padding="16,12">
+                    <Grid ColumnDefinitions="*,Auto,Auto">
+                        <!-- Search/Filter Box -->
+                        <Border Grid.Column="0"
+                                Background="{DynamicResource InputBackgroundBrush}"
+                                BorderBrush="{DynamicResource InputBorderBrush}"
+                                BorderThickness="1"
+                                CornerRadius="6"
+                                Padding="0">
+                            <Grid ColumnDefinitions="Auto,*">
+                                <material:MaterialIcon Grid.Column="0" Kind="Magnify" Width="16" Height="16"
+                                           Foreground="{DynamicResource SecondaryTextBrush}"
+                                           VerticalAlignment="Center"
+                                           Margin="12,0,0,0"/>
+                                <TextBox Grid.Column="1"
+                                         Text="{Binding FilterText}"
+                                         Watermark="Filter files..."
+                                         Background="Transparent"
+                                         BorderThickness="0"
+                                         Padding="8"
+                                         FontSize="13"
+                                         VerticalAlignment="Center"/>
+                            </Grid>
+                        </Border>
+
+                        <!-- Status Filter Dropdown -->
+                        <ComboBox Grid.Column="1"
+                                  ItemsSource="{Binding StatusFilterOptions}"
+                                  SelectedItem="{Binding SelectedStatusFilter}"
+                                  Margin="8,0,0,0"
+                                  MinWidth="120"
+                                  VerticalAlignment="Center"/>
+
+                        <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="4" Margin="8,0,0,0">
+                            <Button Command="{Binding UpdateCommand}" ToolTip.Tip="Update (Ctrl+T)" Classes="icon">
+                                <material:MaterialIcon Kind="Download" Width="18" Height="18"/>
+                            </Button>
+                            <Button Command="{Binding CommitCommand}" ToolTip.Tip="Commit (Ctrl+K)" Classes="icon">
+                                <material:MaterialIcon Kind="Upload" Width="18" Height="18"/>
+                            </Button>
+                            <Separator Classes="modern" Margin="4,0"/>
+                            <Button Command="{Binding RefreshCommand}" ToolTip.Tip="Refresh (F5)" Classes="icon">
+                                <material:MaterialIcon Kind="Refresh" Width="18" Height="18"/>
+                            </Button>
+                            <Button Command="{Binding DiffCommand}" ToolTip.Tip="Diff (Ctrl+D)" Classes="icon">
+                                <material:MaterialIcon Kind="FileCompare" Width="18" Height="18"/>
+                            </Button>
+                            <Button Command="{Binding ShowHistoryCommand}" ToolTip.Tip="History (Ctrl+L)" Classes="icon">
+                                <material:MaterialIcon Kind="History" Width="18" Height="18"/>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- File Tree -->
+                <TreeView ItemsSource="{Binding FileStatuses}"
+                          SelectedItem="{Binding SelectedFile}"
+                          MinHeight="200"
+                          Margin="0,60,0,0"
+                          Padding="8,4">
+                    <TreeView.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Update" Command="{Binding UpdateCommand}">
+                                <MenuItem.Icon>
+                                    <material:MaterialIcon Kind="Download" Width="16" Height="16"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="Commit..." Command="{Binding CommitCommand}">
+                                <MenuItem.Icon>
+                                    <material:MaterialIcon Kind="Upload" Width="16" Height="16"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <Separator/>
+                            <MenuItem Header="Diff" Command="{Binding DiffCommand}">
+                                <MenuItem.Icon>
+                                    <material:MaterialIcon Kind="FileCompare" Width="16" Height="16"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="History" Command="{Binding ShowHistoryCommand}">
+                                <MenuItem.Icon>
+                                    <material:MaterialIcon Kind="History" Width="16" Height="16"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="Blame" Command="{Binding BlameCommand}">
+                                <MenuItem.Icon>
+                                    <material:MaterialIcon Kind="AccountEdit" Width="16" Height="16"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <Separator/>
+                            <MenuItem Header="Add" Command="{Binding AddCommand}">
+                                <MenuItem.Icon>
+                                    <material:MaterialIcon Kind="Plus" Width="16" Height="16" Foreground="#4CAF50"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="Delete" Command="{Binding DeleteCommand}">
+                                <MenuItem.Icon>
+                                    <material:MaterialIcon Kind="Delete" Width="16" Height="16" Foreground="#F44336"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="Revert" Command="{Binding RevertCommand}">
+                                <MenuItem.Icon>
+                                    <material:MaterialIcon Kind="Undo" Width="16" Height="16"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="Rename..." Command="{Binding RenameCommand}" InputGesture="F2">
+                                <MenuItem.Icon>
+                                    <material:MaterialIcon Kind="RenameBox" Width="16" Height="16"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="Lock/Unlock..." Command="{Binding LockFileCommand}">
+                                <MenuItem.Icon>
+                                    <material:MaterialIcon Kind="Lock" Width="16" Height="16"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="Properties..." Command="{Binding ShowPropertiesCommand}">
+                                <MenuItem.Icon>
+                                    <material:MaterialIcon Kind="TagMultiple" Width="16" Height="16"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <Separator/>
+                            <MenuItem Header="New Folder..." Command="{Binding NewFolderCommand}">
+                                <MenuItem.Icon>
+                                    <material:MaterialIcon Kind="FolderPlus" Width="16" Height="16"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <Separator/>
+                            <MenuItem Header="Copy Path" Command="{Binding CopyPathCommand}">
+                                <MenuItem.Icon>
+                                    <material:MaterialIcon Kind="ContentCopy" Width="16" Height="16"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="Open in Explorer" Command="{Binding OpenFileInExplorerCommand}">
+                                <MenuItem.Icon>
+                                    <material:MaterialIcon Kind="FolderOpen" Width="16" Height="16"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                        </ContextMenu>
+                    </TreeView.ContextMenu>
+                    <TreeView.DataTemplates>
+                        <TreeDataTemplate DataType="models:SvnStatus" ItemsSource="{Binding Children}">
+                            <Grid ColumnDefinitions="Auto,Auto,Auto,*,Auto" MinHeight="26">
+                                <!-- Checkbox for multi-select commit -->
+                                <CheckBox Grid.Column="0"
+                                          IsChecked="{Binding IsSelected}"
+                                          VerticalAlignment="Center"
+                                          Margin="0,0,4,0"
+                                          MinWidth="0"
+                                          Padding="0"/>
+
+                                <!-- File/Folder Type Icon (Material Icons) -->
+                                <material:MaterialIcon Grid.Column="1"
+                                                       Kind="{Binding Path, Converter={StaticResource FileTypeToIconConverter}}"
+                                                       Width="18" Height="18"
+                                                       Margin="0,0,6,0"
+                                                       VerticalAlignment="Center"
+                                                       Foreground="{DynamicResource PrimaryTextBrush}"/>
+
+                                <!-- Status Icon -->
+                                <TextBlock Grid.Column="2"
+                                           Text="{Binding WorkingCopyStatus, Converter={StaticResource StatusToIconConverter}}"
+                                           Foreground="{Binding WorkingCopyStatus, Converter={StaticResource StatusToColorConverter}}"
+                                           FontSize="11"
+                                           Margin="0,0,6,0"
+                                           VerticalAlignment="Center"/>
+
+                                <!-- File/Folder Name -->
+                                <TextBlock Grid.Column="3"
+                                           Text="{Binding Name}"
+                                           Classes="body"
+                                           TextTrimming="CharacterEllipsis"
+                                           VerticalAlignment="Center"
+                                           FontSize="13"/>
+
+                                <!-- Status Badge - Only show for meaningful status -->
+                                <Border Grid.Column="4"
+                                        Background="{Binding WorkingCopyStatus, Converter={StaticResource StatusToColorConverter}}"
+                                        CornerRadius="3"
+                                        Padding="5,2"
+                                        Margin="8,0,0,0"
+                                        VerticalAlignment="Center"
+                                        IsVisible="{Binding ShowStatusBadge}">
+                                    <TextBlock Text="{Binding WorkingCopyStatus, Converter={StaticResource StatusToStringConverter}}"
+                                               FontSize="9" FontWeight="SemiBold"
+                                               Foreground="White"/>
+                                </Border>
+                            </Grid>
+                        </TreeDataTemplate>
+                    </TreeView.DataTemplates>
+                </TreeView>
+            </Grid>
+
+            <!-- Grid Splitter for Right Panel -->
+            <GridSplitter Grid.Column="3" ResizeDirection="Columns" Background="Transparent" Width="8"/>
+
+            <!-- ==============================================
+                 Right Panel - Commit History
+                 ============================================== -->
+            <Border Grid.Column="4"
+                    Background="{DynamicResource SidebarBackgroundBrush}"
+                    BorderBrush="{DynamicResource SidebarBorderBrush}"
+                    BorderThickness="1,0,0,0">
+                <Grid RowDefinitions="Auto,Auto,*">
+                    <!-- ==============================================
+                         Compact Header with Filter Toggle
+                         ============================================== -->
+                    <Border Grid.Row="0"
+                            Padding="16,14,16,10"
+                            BorderBrush="{DynamicResource SidebarBorderBrush}"
+                            BorderThickness="0,0,0,1">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <StackPanel Grid.Column="0" Spacing="2">
+                                <TextBlock Text="Commit History" FontSize="14" FontWeight="SemiBold"
+                                           Foreground="{DynamicResource PrimaryTextBrush}"/>
+                                <TextBlock Text="{Binding LogEntries.Count, StringFormat='{}{0} revisions'}"
+                                           FontSize="10" Foreground="{DynamicResource SecondaryTextBrush}"/>
+                            </StackPanel>
+                            <Button Grid.Column="1"
+                                    Command="{Binding ToggleFiltersCommand}"
+                                    Background="Transparent"
+                                    BorderThickness="0"
+                                    Padding="6"
+                                    CornerRadius="4"
+                                    ToolTip.Tip="Toggle filters">
+                                <material:MaterialIcon Kind="FilterVariant" Width="16" Height="16"
+                                                       Foreground="{DynamicResource SecondaryTextBrush}"/>
+                            </Button>
+                        </Grid>
+                    </Border>
+
+                    <!-- ==============================================
+                         Collapsible Filters Section
+                         ============================================== -->
+                    <Border Grid.Row="1"
+                            Padding="12,10"
+                            BorderBrush="{DynamicResource SidebarBorderBrush}"
+                            BorderThickness="0,0,0,1"
+                            IsVisible="{Binding ShowFilters}">
+                        <StackPanel Spacing="10">
+                            <!-- Search Input -->
+                            <Border Background="{DynamicResource InputBackgroundBrush}"
+                                    BorderBrush="{DynamicResource InputBorderBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="6"
+                                    Padding="0">
+                                <Grid ColumnDefinitions="Auto,*">
+                                    <material:MaterialIcon Grid.Column="0" Kind="Magnify" Width="14" Height="14"
+                                                           Foreground="{DynamicResource DisabledTextBrush}"
+                                                           VerticalAlignment="Center"
+                                                           Margin="10,0,0,0"/>
+                                    <TextBox Grid.Column="1"
+                                             Text="{Binding LogMessageFilter}"
+                                             Watermark="Search commits..."
+                                             Background="Transparent"
+                                             BorderThickness="0"
+                                             Padding="8,5"
+                                             FontSize="12"/>
+                                </Grid>
+                            </Border>
+
+                            <!-- Filters Row -->
+                            <Grid ColumnDefinitions="*,Auto">
+                                <ComboBox Grid.Column="0"
+                                          ItemsSource="{Binding AvailableAuthors}"
+                                          SelectedItem="{Binding LogAuthorFilter}"
+                                          PlaceholderText="All authors"
+                                          FontSize="12"
+                                          Height="30"
+                                          CornerRadius="6"/>
+                                <Button Grid.Column="1"
+                                        Command="{Binding ClearLogFiltersCommand}"
+                                        ToolTip.Tip="Clear filters"
+                                        Margin="6,0,0,0"
+                                        Padding="0"
+                                        Width="30"
+                                        Height="30"
+                                        Background="Transparent"
+                                        BorderThickness="0"
+                                        CornerRadius="6">
+                                    <material:MaterialIcon Kind="Close" Width="14" Height="14"
+                                                           Foreground="{DynamicResource SecondaryTextBrush}"/>
+                                </Button>
+                            </Grid>
+
+                            <!-- Compact Date Legend -->
+                            <UniformGrid Columns="4" Margin="0,4,0,0">
+                                <Border Background="{DynamicResource AddedBrush}"
+                                        CornerRadius="4" Padding="6,3" Margin="0,0,4,0"
+                                        ToolTip.Tip="Added">
+                                    <TextBlock Text="A" FontSize="9" FontWeight="SemiBold"
+                                               Foreground="White" HorizontalAlignment="Center"/>
+                                </Border>
+                                <Border Background="{DynamicResource ModifiedBrush}"
+                                        CornerRadius="4" Padding="6,3" Margin="0,0,4,0"
+                                        ToolTip.Tip="Modified">
+                                    <TextBlock Text="M" FontSize="9" FontWeight="SemiBold"
+                                               Foreground="White" HorizontalAlignment="Center"/>
+                                </Border>
+                                <Border Background="{DynamicResource DeletedBrush}"
+                                        CornerRadius="4" Padding="6,3" Margin="0,0,4,0"
+                                        ToolTip.Tip="Deleted">
+                                    <TextBlock Text="D" FontSize="9" FontWeight="SemiBold"
+                                               Foreground="White" HorizontalAlignment="Center"/>
+                                </Border>
+                                <Border Background="{DynamicResource ReplacedBrush}"
+                                        CornerRadius="4" Padding="6,3"
+                                        ToolTip.Tip="Replaced">
+                                    <TextBlock Text="R" FontSize="9" FontWeight="SemiBold"
+                                               Foreground="White" HorizontalAlignment="Center"/>
+                                </Border>
+                            </UniformGrid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- ==============================================
+                         Commit Entries List
+                         ============================================== -->
+                    <ListBox Grid.Row="2"
+                             ItemsSource="{Binding LogEntries}"
+                             Padding="10,8"
+                             Background="Transparent"
+                             HorizontalAlignment="Stretch">
+                        <ListBox.Styles>
+                            <Style Selector="ListBoxItem">
+                                <Setter Property="Padding" Value="0"/>
+                                <Setter Property="Margin" Value="0"/>
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                <Setter Property="Background" Value="Transparent"/>
+                            </Style>
+                            <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
+                                <Setter Property="Background" Value="{DynamicResource AppTertiaryBackgroundBrush}"/>
+                            </Style>
+                        </ListBox.Styles>
+                        <ListBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <VirtualizingStackPanel/>
+                            </ItemsPanelTemplate>
+                        </ListBox.ItemsPanel>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="{DynamicResource CardBackgroundBrush}"
+                                        BorderBrush="{DynamicResource CardBorderBrush}"
+                                        BorderThickness="0,0,0,1"
+                                        Padding="10,8"
+                                        Margin="0,0,0,0">
+                                    <Grid RowDefinitions="Auto,Auto,Auto,Auto">
+                                        <!-- Header: Revision + Author + Date -->
+                                        <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto">
+                                            <!-- Revision Badge -->
+                                            <Border Grid.Column="0"
+                                                    Background="{DynamicResource AccentBrush}"
+                                                    CornerRadius="3"
+                                                    Padding="5,2,6,2"
+                                                    Margin="0,0,8,0">
+                                                <TextBlock Text="{Binding DisplayRevision}" FontSize="10"
+                                                           FontWeight="SemiBold" Foreground="White"/>
+                                            </Border>
+
+                                            <!-- Author -->
+                                            <TextBlock Grid.Column="1"
+                                                       Text="{Binding Author}"
+                                                       FontSize="12"
+                                                       FontWeight="Medium"
+                                                       Foreground="{DynamicResource PrimaryTextBrush}"
+                                                       VerticalAlignment="Center"
+                                                       TextTrimming="CharacterEllipsis"/>
+
+                                            <!-- Change Count Badge -->
+                                            <Border Grid.Column="2"
+                                                    Background="{DynamicResource AppTertiaryBackgroundBrush}"
+                                                    CornerRadius="8"
+                                                    Padding="6,2"
+                                                    Margin="4,0,0,0"
+                                                    IsVisible="{Binding HasChangedPaths}">
+                                                <TextBlock Text="{Binding ChangedPathCount, StringFormat='{}+{0}'}"
+                                                           FontSize="9" FontWeight="SemiBold"
+                                                           Foreground="{DynamicResource SecondaryTextBrush}"/>
+                                            </Border>
+                                        </Grid>
+
+                                        <!-- Date -->
+                                        <TextBlock Grid.Row="1"
+                                                   Text="{Binding DisplayDate}"
+                                                   FontSize="10"
+                                                   Foreground="{DynamicResource DisabledTextBrush}"
+                                                   Margin="0,3,0,0"/>
+
+                                        <!-- Commit Message -->
+                                        <TextBlock Grid.Row="2"
+                                                   Text="{Binding Message}"
+                                                   FontSize="12"
+                                                   Foreground="{DynamicResource PrimaryTextBrush}"
+                                                   TextWrapping="Wrap"
+                                                   Margin="0,6,0,0"
+                                                   MaxHeight="60"
+                                                   TextTrimming="CharacterEllipsis"/>
+
+                                        <!-- Changed Paths Preview -->
+                                        <ItemsControl Grid.Row="3"
+                                                      ItemsSource="{Binding ChangedPaths}"
+                                                      Margin="0,6,0,0"
+                                                      MaxHeight="48"
+                                                      IsVisible="{Binding HasChangedPaths}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Grid ColumnDefinitions="Auto,*" Margin="0,1,0,0">
+                                                        <TextBlock Grid.Column="0"
+                                                                   Text="{Binding Action, Converter={StaticResource PathActionToStringConverter}}"
+                                                                   FontSize="9"
+                                                                   FontWeight="SemiBold"
+                                                                   Width="12"
+                                                                   Margin="0,0,6,0"
+                                                                   VerticalAlignment="Top">
+                                                            <TextBlock.Foreground>
+                                                                <SolidColorBrush Color="{Binding Action, Converter={StaticResource PathActionToColorConverter}}"/>
+                                                            </TextBlock.Foreground>
+                                                        </TextBlock>
+                                                        <TextBlock Grid.Column="1"
+                                                                   Text="{Binding Path}"
+                                                                   FontSize="10"
+                                                                   Foreground="{DynamicResource SecondaryTextBrush}"
+                                                                   TextTrimming="CharacterEllipsis"/>
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- ==============================================
+             Status Bar
+             ============================================== -->
+        <Border Grid.Row="2"
+                Height="32"
+                Background="{DynamicResource AppSecondaryBackgroundBrush}"
+                BorderBrush="{DynamicResource SidebarBorderBrush}"
+                BorderThickness="0,1,0,0"
+                Padding="16,0">
+            <Grid ColumnDefinitions="*,Auto,Auto">
+                <!-- Status Message (only non-error messages) -->
+                <TextBlock Grid.Column="0" Text="{Binding StatusMessage}" Classes="caption" VerticalAlignment="Center">
+                    <TextBlock.IsVisible>
+                        <MultiBinding Converter="{x:Static BoolConverters.And}">
+                            <Binding Path="IsLoading" Converter="{StaticResource InverseBoolConverter}"/>
+                        </MultiBinding>
+                    </TextBlock.IsVisible>
+                </TextBlock>
+
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8" IsVisible="{Binding IsLoading}">
+                    <ProgressBar Width="80" Height="3" IsIndeterminate="True"/>
+                    <TextBlock Text="{Binding StatusMessage}" Classes="caption" VerticalAlignment="Center"/>
+                </StackPanel>
+
+                <!-- App Info -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="12">
+                    <TextBlock Text="SVN Client" Classes="caption" VerticalAlignment="Center"/>
+                    <Border Width="1" Background="{DynamicResource SidebarBorderBrush}"/>
+                    <TextBlock Text="v1.0" Classes="caption" VerticalAlignment="Center"/>
+                </StackPanel>
+
+                <!-- Notification Bell -->
+                <Button Grid.Column="2"
+                        Command="{Binding ToggleNotificationCenterCommand}"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        Padding="8"
+                        CornerRadius="4"
+                        HorizontalAlignment="Right"
+                        ToolTip.Tip="Notifications">
+                    <Grid>
+                        <material:MaterialIcon Kind="BellOutline" Width="18" Height="18"
+                                               Foreground="{DynamicResource SecondaryTextBrush}"/>
+                        <!-- Unread Badge -->
+                        <Border Width="16" Height="16"
+                                Background="#F44336"
+                                CornerRadius="8"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Top"
+                                Margin="0,-4,-4,0"
+                                IsVisible="{Binding Notifications.UnreadCount, Converter={StaticResource IntToVisibilityConverter}}">
+                            <TextBlock Text="{Binding Notifications.UnreadCount}"
+                                       FontSize="9" FontWeight="Bold"
+                                       Foreground="White"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       Margin="0,0,0,1"/>
+                        </Border>
+                    </Grid>
+                </Button>
+            </Grid>
+        </Border>
+    </Grid>
+
+    <!-- Keyboard Shortcuts -->
+    <Window.KeyBindings>
+        <KeyBinding Gesture="Ctrl+T" Command="{Binding UpdateCommand}"/>
+        <KeyBinding Gesture="Ctrl+K" Command="{Binding CommitCommand}"/>
+        <KeyBinding Gesture="Ctrl+D" Command="{Binding DiffCommand}"/>
+        <KeyBinding Gesture="Ctrl+L" Command="{Binding ShowHistoryCommand}"/>
+        <KeyBinding Gesture="F5" Command="{Binding RefreshCommand}"/>
+        <KeyBinding Gesture="Delete" Command="{Binding DeleteCommand}"/>
+        <KeyBinding Gesture="Ctrl+Z" Command="{Binding RevertCommand}"/>
+        <KeyBinding Gesture="F2" Command="{Binding RenameCommand}"/>
+    </Window.KeyBindings>
+
+</Window>

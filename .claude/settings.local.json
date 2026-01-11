@@ -1,0 +1,50 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir:*)",
+      "Bash(dotnet build:*)",
+      "Bash(del:*)",
+      "Bash(sed:*)",
+      "Bash(dotnet clean:*)",
+      "mcp__zai-mcp-server__analyze_image",
+      "Bash(dotnet add:*)",
+      "Bash(dotnet remove:*)",
+      "mcp__web-reader__webReader",
+      "mcp__web-search-prime__webSearchPrime",
+      "mcp__zread__search_doc",
+      "Bash(dotnet test:*)",
+      "Bash(dotnet run)",
+      "Bash(timeout:*)",
+      "Bash(taskkill:*)",
+      "Bash(Start-Sleep -Seconds 3)",
+      "Bash(Get-Content \"C:\\\\Users\\\\ZHANGY~1\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-zhangyutong-RiderProjects-Svns\\\\tasks\\\\bf5f4eb.output\")",
+      "WebSearch",
+      "Skill(frontend-design:frontend-design)",
+      "Bash(dotnet run --no-build)",
+      "Bash(tasklist:*)",
+      "mcp__zai-mcp-server__diagnose_error_screenshot",
+      "Bash(exit:*)",
+      "mcp__zread__get_repo_structure",
+      "Bash(dotnet analyze:*)",
+      "Bash(tree:*)",
+      "Bash(while read vm)",
+      "Bash(do:*)",
+      "Bash(view=\"$vmView\")",
+      "Bash(if [ ! -f \"Views/$view.axaml\" ])",
+      "Bash([ ! -f \"Views/Dialogs/$view.axaml\" ])",
+      "Bash([ \"$vm\" != \"ViewModelBase\" ])",
+      "Bash(then)",
+      "Bash(echo:*)",
+      "Bash(fi:*)",
+      "Bash(done:*)",
+      "mcp__zai-mcp-server__ui_to_artifact",
+      "Bash(git add:*)"
+    ]
+  },
+  "model": "opus",
+  "enabledPlugins": {
+    "glm-plan-usage@zai-coding-plugins": true,
+    "glm-plan-bug@zai-coding-plugins": true
+  },
+  "alwaysThinkingEnabled": true
+}

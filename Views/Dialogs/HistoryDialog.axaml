@@ -1,0 +1,164 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:Svns.ViewModels"
+        xmlns:converters="using:Svns.Converters"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="850" d:DesignHeight="700"
+        x:Class="Svns.Views.Dialogs.HistoryDialog"
+        x:DataType="vm:HistoryViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="{Binding FileName, StringFormat='History - {0}'}"
+        Classes="dialog large resizable"
+        Width="850"
+        MinWidth="600" MinHeight="400"
+        WindowStartupLocation="CenterOwner">
+
+    <Design.DataContext>
+        <vm:HistoryViewModel/>
+    </Design.DataContext>
+
+    <Window.Resources>
+        <converters:SvnPathActionToColorConverter x:Key="PathActionToColorConverter"/>
+        <converters:SvnPathActionToStringConverter x:Key="PathActionToStringConverter"/>
+    </Window.Resources>
+
+    <Grid RowDefinitions="Auto,*,Auto">
+        <!-- Header -->
+        <Border Grid.Row="0" Classes="dialog-header">
+            <Grid ColumnDefinitions="*,Auto">
+                <StackPanel Grid.Column="0" Spacing="4">
+                    <TextBlock Text="{Binding FileName}" Classes="dialog-title"/>
+                    <TextBlock Text="{Binding FilePath}"
+                               FontSize="12"
+                               Foreground="{DynamicResource SecondaryTextBrush}"
+                               TextTrimming="CharacterEllipsis"/>
+                </StackPanel>
+
+                <!-- Stats -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                    <TextBlock Text="{Binding LoadedCount}" FontSize="18" FontWeight="Bold"
+                               Foreground="{DynamicResource AccentBrush}"/>
+                    <TextBlock Text="revisions" FontSize="14"
+                               Foreground="{DynamicResource SecondaryTextBrush}"
+                               VerticalAlignment="Center"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- History List -->
+        <Border Grid.Row="1" Classes="dialog-content">
+            <Border Classes="dialog-card">
+                <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                    <ItemsControl ItemsSource="{Binding LogEntries}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="Transparent"
+                                        BorderBrush="{DynamicResource SidebarBorderBrush}"
+                                        BorderThickness="0,0,0,1"
+                                        Padding="16,14"
+                                        Margin="0,0,0,0">
+                                    <Grid RowDefinitions="Auto,Auto,Auto">
+                                        <!-- Revision and Author -->
+                                        <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto">
+                                            <Border Grid.Column="0"
+                                                    Background="{DynamicResource AccentBrush}"
+                                                    CornerRadius="4"
+                                                    Padding="8,4"
+                                                    Margin="0,0,12,0">
+                                                <TextBlock Text="{Binding DisplayRevision}" FontSize="12"
+                                                           FontWeight="SemiBold" Foreground="White"/>
+                                            </Border>
+                                            <TextBlock Grid.Column="1"
+                                                       Text="{Binding Author}"
+                                                       FontSize="14"
+                                                       FontWeight="Medium"
+                                                       Foreground="{DynamicResource PrimaryTextBrush}"
+                                                       VerticalAlignment="Center"/>
+                                            <TextBlock Grid.Column="2"
+                                                       Text="{Binding DisplayDate}"
+                                                       FontSize="12"
+                                                       Foreground="{DynamicResource SecondaryTextBrush}"
+                                                       VerticalAlignment="Center"/>
+                                        </Grid>
+
+                                        <!-- Message -->
+                                        <TextBlock Grid.Row="1"
+                                                   Text="{Binding Message}"
+                                                   FontSize="13"
+                                                   Foreground="{DynamicResource PrimaryTextBrush}"
+                                                   TextWrapping="Wrap"
+                                                   Margin="0,10,0,0"/>
+
+                                        <!-- Changed Paths -->
+                                        <ItemsControl Grid.Row="2"
+                                                      ItemsSource="{Binding ChangedPaths}"
+                                                      Margin="0,10,0,0"
+                                                      IsVisible="{Binding HasChangedPaths}">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <WrapPanel/>
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Border Background="{DynamicResource AppSecondaryBackgroundBrush}"
+                                                            CornerRadius="4"
+                                                            Padding="8,4"
+                                                            Margin="0,0,6,6">
+                                                        <StackPanel Orientation="Horizontal" Spacing="6">
+                                                            <TextBlock Text="{Binding Action, Converter={StaticResource PathActionToStringConverter}}"
+                                                                       FontSize="10"
+                                                                       FontWeight="SemiBold">
+                                                                <TextBlock.Foreground>
+                                                                    <SolidColorBrush Color="{Binding Action, Converter={StaticResource PathActionToColorConverter}}"/>
+                                                                </TextBlock.Foreground>
+                                                            </TextBlock>
+                                                            <TextBlock Text="{Binding FileName}"
+                                                                       FontSize="11"
+                                                                       Foreground="{DynamicResource SecondaryTextBrush}"
+                                                                       MaxWidth="250"
+                                                                       TextTrimming="CharacterEllipsis"/>
+                                                        </StackPanel>
+                                                    </Border>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Border>
+        </Border>
+
+        <!-- Footer -->
+        <Border Grid.Row="2" Classes="dialog-footer">
+            <Grid ColumnDefinitions="Auto,*,Auto">
+                <!-- Load More -->
+                <Button Grid.Column="0"
+                        Content="Load More..."
+                        Command="{Binding LoadMoreCommand}"
+                        IsEnabled="{Binding !IsLoading}"
+                        Padding="16,10"/>
+
+                <!-- Status -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center"
+                            IsVisible="{Binding IsLoading}">
+                    <ProgressBar Width="60" Height="3" IsIndeterminate="True"/>
+                    <TextBlock Text="{Binding StatusMessage}" FontSize="12"
+                               Foreground="{DynamicResource SecondaryTextBrush}"
+                               VerticalAlignment="Center"/>
+                </StackPanel>
+
+                <Button Grid.Column="2"
+                        Content="Close"
+                        Command="{Binding CloseCommand}"
+                        Padding="24,10"
+                        Classes="primary"/>
+            </Grid>
+        </Border>
+    </Grid>
+
+</Window>

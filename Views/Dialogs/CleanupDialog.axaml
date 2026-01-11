@@ -1,0 +1,202 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:Svns.ViewModels"
+        xmlns:material="using:Material.Icons.Avalonia"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="400"
+        x:Class="Svns.Views.Dialogs.CleanupDialog"
+        x:DataType="vm:CleanupViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="Cleanup Working Copy - Svns"
+        Classes="dialog medium"
+        Width="500" Height="400"
+        MinWidth="400" MinHeight="350"
+        Background="{DynamicResource AppBackgroundBrush}"
+        WindowStartupLocation="CenterOwner">
+
+    <Design.DataContext>
+        <vm:CleanupViewModel/>
+    </Design.DataContext>
+
+    <Grid RowDefinitions="Auto,*,Auto,Auto">
+        <!-- Header -->
+        <Border Grid.Row="0" Classes="dialog-header">
+            <Grid ColumnDefinitions="Auto,*">
+                <material:MaterialIcon Grid.Column="0" Kind="Broom" Width="32" Height="32"
+                                       Foreground="{DynamicResource AccentBrush}"
+                                       VerticalAlignment="Center"
+                                       Margin="0,0,16,0"/>
+                <StackPanel Grid.Column="1" Spacing="4" VerticalAlignment="Center">
+                    <TextBlock Text="Cleanup Working Copy" FontSize="20" FontWeight="SemiBold"
+                               Foreground="{DynamicResource PrimaryTextBrush}"/>
+                    <TextBlock Text="Clean up the working copy and remove locks"
+                               FontSize="13"
+                               Foreground="{DynamicResource SecondaryTextBrush}"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Content -->
+        <ScrollViewer Grid.Row="1" Padding="24,16">
+            <StackPanel Spacing="16">
+                <!-- Working Copy Path -->
+                <StackPanel Spacing="4">
+                    <TextBlock Text="Working Copy" FontSize="12" FontWeight="SemiBold"
+                               Foreground="{DynamicResource SecondaryTextBrush}"/>
+                    <Border Background="{DynamicResource CardBackgroundBrush}"
+                            BorderBrush="{DynamicResource CardBorderBrush}"
+                            BorderThickness="1"
+                            CornerRadius="6"
+                            Padding="12,8">
+                        <TextBlock Text="{Binding WorkingCopyPath}"
+                                   FontSize="13"
+                                   Foreground="{DynamicResource PrimaryTextBrush}"
+                                   TextTrimming="CharacterEllipsis"/>
+                    </Border>
+                </StackPanel>
+
+                <!-- Cleanup Options -->
+                <StackPanel Spacing="4">
+                    <TextBlock Text="Options" FontSize="12" FontWeight="SemiBold"
+                               Foreground="{DynamicResource SecondaryTextBrush}"
+                               Margin="0,8,0,0"/>
+
+                    <Border Background="{DynamicResource CardBackgroundBrush}"
+                            BorderBrush="{DynamicResource CardBorderBrush}"
+                            BorderThickness="1"
+                            CornerRadius="8"
+                            Padding="16">
+                        <StackPanel Spacing="12">
+                            <!-- Remove Unversioned -->
+                            <Grid ColumnDefinitions="Auto,*">
+                                <CheckBox Grid.Column="0"
+                                          IsChecked="{Binding RemoveUnversioned}"
+                                          IsEnabled="{Binding CanCleanup}"
+                                          VerticalAlignment="Top"
+                                          Margin="0,2,12,0"/>
+                                <StackPanel Grid.Column="1" Spacing="2">
+                                    <TextBlock Text="Remove unversioned files"
+                                               FontSize="13"
+                                               FontWeight="Medium"
+                                               Foreground="{DynamicResource PrimaryTextBrush}"/>
+                                    <TextBlock Text="Delete files that are not under version control"
+                                               FontSize="11"
+                                               Foreground="{DynamicResource SecondaryTextBrush}"
+                                               TextWrapping="Wrap"/>
+                                </StackPanel>
+                            </Grid>
+
+                            <Border Height="1" Background="{DynamicResource SidebarBorderBrush}" Margin="0,4"/>
+
+                            <!-- Remove Ignored -->
+                            <Grid ColumnDefinitions="Auto,*">
+                                <CheckBox Grid.Column="0"
+                                          IsChecked="{Binding RemoveIgnored}"
+                                          IsEnabled="{Binding CanCleanup}"
+                                          VerticalAlignment="Top"
+                                          Margin="0,2,12,0"/>
+                                <StackPanel Grid.Column="1" Spacing="2">
+                                    <TextBlock Text="Remove ignored files"
+                                               FontSize="13"
+                                               FontWeight="Medium"
+                                               Foreground="{DynamicResource PrimaryTextBrush}"/>
+                                    <TextBlock Text="Delete files matching svn:ignore patterns"
+                                               FontSize="11"
+                                               Foreground="{DynamicResource SecondaryTextBrush}"
+                                               TextWrapping="Wrap"/>
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <!-- Result Panel (shows after cleanup) -->
+                <Border Background="{DynamicResource CardBackgroundBrush}"
+                        BorderBrush="{DynamicResource CardBorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Padding="16"
+                        IsVisible="{Binding IsCompleted}">
+                    <StackPanel Spacing="8">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <material:MaterialIcon Kind="CheckCircle" Width="20" Height="20"
+                                                   Foreground="#4CAF50"/>
+                            <TextBlock Text="Cleanup Completed" FontWeight="SemiBold"
+                                       Foreground="{DynamicResource PrimaryTextBrush}"/>
+                        </StackPanel>
+                        <TextBlock Text="{Binding ResultMessage}"
+                                   FontSize="12"
+                                   Foreground="{DynamicResource SecondaryTextBrush}"
+                                   TextWrapping="Wrap"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Error Panel -->
+                <Border Background="#FFF3E0"
+                        BorderBrush="#FF9800"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Padding="16"
+                        IsVisible="{Binding HasError}">
+                    <StackPanel Spacing="8">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <material:MaterialIcon Kind="AlertCircle" Width="20" Height="20"
+                                                   Foreground="#F44336"/>
+                            <TextBlock Text="Error" FontWeight="SemiBold"
+                                       Foreground="#D32F2F"/>
+                        </StackPanel>
+                        <TextBlock Text="{Binding ResultMessage}"
+                                   FontSize="12"
+                                   Foreground="#5D4037"
+                                   TextWrapping="Wrap"/>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Status Bar -->
+        <Border Grid.Row="2"
+                Background="{DynamicResource AppSecondaryBackgroundBrush}"
+                Padding="24,8"
+                IsVisible="{Binding IsRunning}">
+            <StackPanel Orientation="Horizontal" Spacing="12">
+                <ProgressBar Width="100" Height="3" IsIndeterminate="True"/>
+                <TextBlock Text="{Binding StatusMessage}"
+                           FontSize="12"
+                           Foreground="{DynamicResource SecondaryTextBrush}"
+                           VerticalAlignment="Center"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Footer -->
+        <Border Grid.Row="3" Classes="dialog-footer">
+            <Grid ColumnDefinitions="*,Auto,Auto">
+                <!-- Status Message (when not running) -->
+                <TextBlock Grid.Column="0"
+                           Text="{Binding StatusMessage}"
+                           FontSize="12"
+                           Foreground="{DynamicResource SecondaryTextBrush}"
+                           VerticalAlignment="Center"
+                           IsVisible="{Binding !IsRunning}"/>
+
+                <Button Grid.Column="1"
+                        Content="Close"
+                        Command="{Binding CloseCommand}"
+                        Padding="24,8"
+                        Margin="0,0,12,0"/>
+                <Button Grid.Column="2"
+                        Content="Cleanup"
+                        Command="{Binding CleanupCommand}"
+                        IsEnabled="{Binding CanCleanup}"
+                        Padding="24,8"
+                        Classes="primary">
+                    <Button.IsVisible>
+                        <Binding Path="IsCompleted" Converter="{x:Static BoolConverters.Not}"/>
+                    </Button.IsVisible>
+                </Button>
+            </Grid>
+        </Border>
+    </Grid>
+
+</Window>

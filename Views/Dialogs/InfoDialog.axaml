@@ -1,0 +1,270 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:Svns.ViewModels"
+        xmlns:material="using:Material.Icons.Avalonia"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="650"
+        x:Class="Svns.Views.Dialogs.InfoDialog"
+        x:DataType="vm:InfoViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="Working Copy Info - Svns"
+        Classes="dialog medium"
+        Width="600" Height="650"
+        MinWidth="500" MinHeight="500"
+        Background="{DynamicResource AppBackgroundBrush}"
+        WindowStartupLocation="CenterOwner">
+
+    <Design.DataContext>
+        <vm:InfoViewModel/>
+    </Design.DataContext>
+
+    <Grid RowDefinitions="Auto,*,Auto">
+        <!-- Header -->
+        <Border Grid.Row="0" Classes="dialog-header">
+            <Grid ColumnDefinitions="Auto,*">
+                <material:MaterialIcon Grid.Column="0" Kind="InformationOutline" Width="32" Height="32"
+                                       Foreground="{DynamicResource AccentBrush}"
+                                       VerticalAlignment="Center"
+                                       Margin="0,0,16,0"/>
+                <StackPanel Grid.Column="1" Spacing="4" VerticalAlignment="Center">
+                    <TextBlock Text="Working Copy Information" FontSize="20" FontWeight="SemiBold"
+                               Foreground="{DynamicResource PrimaryTextBrush}"/>
+                    <TextBlock Text="Detailed SVN repository and working copy info"
+                               FontSize="13"
+                               Foreground="{DynamicResource SecondaryTextBrush}"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Content -->
+        <ScrollViewer Grid.Row="1" Padding="24,16">
+            <StackPanel Spacing="16">
+                <!-- Working Copy Section -->
+                <Border Background="{DynamicResource CardBackgroundBrush}"
+                        BorderBrush="{DynamicResource CardBorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Padding="16">
+                    <StackPanel Spacing="12">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <material:MaterialIcon Kind="FolderOutline" Width="18" Height="18"
+                                                   Foreground="{DynamicResource AccentBrush}"/>
+                            <TextBlock Text="Working Copy" FontSize="14" FontWeight="SemiBold"
+                                       Foreground="{DynamicResource PrimaryTextBrush}"/>
+                        </StackPanel>
+
+                        <Grid RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="120,*">
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Path" Classes="caption"/>
+                            <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Path}"
+                                       Classes="body" TextWrapping="Wrap"/>
+
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Relative Path" Classes="caption" Margin="0,8,0,0"/>
+                            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding RelativePath}"
+                                       Classes="body" Margin="0,8,0,0"/>
+
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Depth" Classes="caption" Margin="0,8,0,0"/>
+                            <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Depth}"
+                                       Classes="body" Margin="0,8,0,0"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- Repository Section -->
+                <Border Background="{DynamicResource CardBackgroundBrush}"
+                        BorderBrush="{DynamicResource CardBorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Padding="16">
+                    <StackPanel Spacing="12">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <material:MaterialIcon Kind="SourceRepository" Width="18" Height="18"
+                                                   Foreground="{DynamicResource AccentBrush}"/>
+                            <TextBlock Text="Repository" FontSize="14" FontWeight="SemiBold"
+                                       Foreground="{DynamicResource PrimaryTextBrush}"/>
+                        </StackPanel>
+
+                        <Grid RowDefinitions="Auto,Auto,Auto,Auto" ColumnDefinitions="120,*">
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="URL" Classes="caption"/>
+                            <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding RepositoryUrl}"
+                                       Classes="body" TextWrapping="Wrap"/>
+
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Root" Classes="caption" Margin="0,8,0,0"/>
+                            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding RepositoryRoot}"
+                                       Classes="body" TextWrapping="Wrap" Margin="0,8,0,0"/>
+
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="UUID" Classes="caption" Margin="0,8,0,0"/>
+                            <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding RepositoryUuid}"
+                                       Classes="body" FontFamily="Consolas" FontSize="11" Margin="0,8,0,0"/>
+
+                            <TextBlock Grid.Row="3" Grid.Column="0" Text="Branch" Classes="caption" Margin="0,8,0,0"/>
+                            <Border Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left"
+                                    Background="{DynamicResource AccentBrush}"
+                                    CornerRadius="4"
+                                    Padding="8,3"
+                                    Margin="0,8,0,0">
+                                <TextBlock Text="{Binding BranchName}"
+                                           FontSize="11" FontWeight="SemiBold"
+                                           Foreground="White"/>
+                            </Border>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- Revision Section -->
+                <Border Background="{DynamicResource CardBackgroundBrush}"
+                        BorderBrush="{DynamicResource CardBorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Padding="16">
+                    <StackPanel Spacing="12">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <material:MaterialIcon Kind="History" Width="18" Height="18"
+                                                   Foreground="{DynamicResource AccentBrush}"/>
+                            <TextBlock Text="Revision Info" FontSize="14" FontWeight="SemiBold"
+                                       Foreground="{DynamicResource PrimaryTextBrush}"/>
+                        </StackPanel>
+
+                        <Grid RowDefinitions="Auto,Auto,Auto,Auto" ColumnDefinitions="120,*">
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Revision" Classes="caption"/>
+                            <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal">
+                                <Border Background="{DynamicResource AccentBrush}"
+                                        CornerRadius="4"
+                                        Padding="6,2">
+                                    <TextBlock Text="{Binding Revision, StringFormat='r{0}'}"
+                                               FontSize="11" FontWeight="SemiBold"
+                                               Foreground="White"/>
+                                </Border>
+                            </StackPanel>
+
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Last Changed Rev" Classes="caption" Margin="0,8,0,0"/>
+                            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding LastChangedRevision, StringFormat='r{0}'}"
+                                       Classes="body" FontWeight="SemiBold" Margin="0,8,0,0"/>
+
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Last Changed By" Classes="caption" Margin="0,8,0,0"/>
+                            <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding LastChangedAuthor}"
+                                       Classes="body" Margin="0,8,0,0"/>
+
+                            <TextBlock Grid.Row="3" Grid.Column="0" Text="Last Changed Date" Classes="caption" Margin="0,8,0,0"/>
+                            <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding FormattedLastChangedDate}"
+                                       Classes="body" Margin="0,8,0,0"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- Changes Section -->
+                <Border Background="{DynamicResource CardBackgroundBrush}"
+                        BorderBrush="{DynamicResource CardBorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Padding="16">
+                    <StackPanel Spacing="12">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <material:MaterialIcon Kind="FileDocument" Width="18" Height="18"
+                                                   Foreground="{DynamicResource AccentBrush}"/>
+                            <TextBlock Text="Local Changes" FontSize="14" FontWeight="SemiBold"
+                                       Foreground="{DynamicResource PrimaryTextBrush}"/>
+                        </StackPanel>
+
+                        <TextBlock Text="{Binding ChangesSummary}"
+                                   Classes="body"
+                                   IsVisible="{Binding HasUncommittedChanges}"/>
+
+                        <TextBlock Text="No uncommitted changes"
+                                   Classes="body"
+                                   Foreground="{DynamicResource SecondaryTextBrush}"
+                                   IsVisible="{Binding !HasUncommittedChanges}"/>
+
+                        <!-- Change Stats -->
+                        <WrapPanel Orientation="Horizontal" IsVisible="{Binding HasUncommittedChanges}">
+                            <!-- Modified -->
+                            <Border Background="#FFF3E0"
+                                    CornerRadius="6"
+                                    Padding="12,8"
+                                    Margin="0,0,8,8">
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <material:MaterialIcon Kind="Pencil" Width="16" Height="16"
+                                                           Foreground="#FF9800"/>
+                                    <TextBlock Text="{Binding ModifiedCount}"
+                                               FontWeight="SemiBold"
+                                               Foreground="#E65100"/>
+                                    <TextBlock Text="Modified"
+                                               FontSize="11"
+                                               Foreground="#E65100"/>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Added -->
+                            <Border Background="#E8F5E9"
+                                    CornerRadius="6"
+                                    Padding="12,8"
+                                    Margin="0,0,8,8">
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <material:MaterialIcon Kind="Plus" Width="16" Height="16"
+                                                           Foreground="#4CAF50"/>
+                                    <TextBlock Text="{Binding AddedCount}"
+                                               FontWeight="SemiBold"
+                                               Foreground="#2E7D32"/>
+                                    <TextBlock Text="Added"
+                                               FontSize="11"
+                                               Foreground="#2E7D32"/>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Deleted -->
+                            <Border Background="#FFEBEE"
+                                    CornerRadius="6"
+                                    Padding="12,8"
+                                    Margin="0,0,8,8">
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <material:MaterialIcon Kind="Delete" Width="16" Height="16"
+                                                           Foreground="#F44336"/>
+                                    <TextBlock Text="{Binding DeletedCount}"
+                                               FontWeight="SemiBold"
+                                               Foreground="#C62828"/>
+                                    <TextBlock Text="Deleted"
+                                               FontSize="11"
+                                               Foreground="#C62828"/>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Conflicted -->
+                            <Border Background="#FCE4EC"
+                                    CornerRadius="6"
+                                    Padding="12,8"
+                                    Margin="0,0,8,8"
+                                    IsVisible="{Binding ConflictedCount}">
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <material:MaterialIcon Kind="Alert" Width="16" Height="16"
+                                                           Foreground="#E91E63"/>
+                                    <TextBlock Text="{Binding ConflictedCount}"
+                                               FontWeight="SemiBold"
+                                               Foreground="#AD1457"/>
+                                    <TextBlock Text="Conflicted"
+                                               FontSize="11"
+                                               Foreground="#AD1457"/>
+                                </StackPanel>
+                            </Border>
+                        </WrapPanel>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Footer -->
+        <Border Grid.Row="2" Classes="dialog-footer">
+            <Grid ColumnDefinitions="*,Auto">
+                <TextBlock Grid.Column="0"
+                           Text="SVN Working Copy"
+                           FontSize="12"
+                           Foreground="{DynamicResource SecondaryTextBrush}"
+                           VerticalAlignment="Center"/>
+                <Button Grid.Column="1"
+                        Content="Close"
+                        Command="{Binding CloseCommand}"
+                        Padding="24,8"/>
+            </Grid>
+        </Border>
+    </Grid>
+
+</Window>

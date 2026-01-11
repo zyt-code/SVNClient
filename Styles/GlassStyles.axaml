@@ -1,0 +1,217 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:material="using:Material.Icons.Avalonia">
+
+    <!-- =============================================
+         Material Icon Default Style
+         ============================================= -->
+    <Style Selector="material|MaterialIcon">
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
+    </Style>
+
+    <!-- =============================================
+         Global Text Styles
+         ============================================= -->
+    <Style Selector="TextBlock.heading">
+        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
+    </Style>
+
+    <Style Selector="TextBlock.subheading">
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontWeight" Value="Medium"/>
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
+    </Style>
+
+    <Style Selector="TextBlock.body">
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
+    </Style>
+
+    <Style Selector="TextBlock.caption">
+        <Setter Property="FontSize" Value="11"/>
+        <Setter Property="Foreground" Value="{DynamicResource SecondaryTextBrush}"/>
+    </Style>
+
+    <!-- =============================================
+         Primary Button Style
+         ============================================= -->
+    <Style Selector="Button.primary">
+        <Setter Property="Background" Value="{DynamicResource AccentBrush}"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="CornerRadius" Value="6"/>
+        <Setter Property="Padding" Value="16,8"/>
+        <Setter Property="FontWeight" Value="Medium"/>
+        <Setter Property="Cursor" Value="Hand"/>
+    </Style>
+
+    <Style Selector="Button.primary:pointerover">
+        <Setter Property="Background" Value="{DynamicResource AccentHoverBrush}"/>
+    </Style>
+
+    <Style Selector="Button.primary:pressed">
+        <Setter Property="Background" Value="{DynamicResource AccentPressedBrush}"/>
+    </Style>
+
+    <Style Selector="Button.primary:disabled">
+        <Setter Property="Opacity" Value="0.5"/>
+    </Style>
+
+    <!-- =============================================
+         Secondary Button Style
+         ============================================= -->
+    <Style Selector="Button.secondary">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="CornerRadius" Value="6"/>
+        <Setter Property="Padding" Value="16,8"/>
+        <Setter Property="FontWeight" Value="Medium"/>
+        <Setter Property="Cursor" Value="Hand"/>
+    </Style>
+
+    <Style Selector="Button.secondary:pointerover">
+        <Setter Property="Background" Value="{DynamicResource AccentBrush}"/>
+        <Setter Property="Foreground" Value="White"/>
+    </Style>
+
+    <Style Selector="Button.secondary:pressed">
+        <Setter Property="Background" Value="{DynamicResource AccentPressedBrush}"/>
+        <Setter Property="Foreground" Value="White"/>
+    </Style>
+
+    <Style Selector="Button.secondary:disabled">
+        <Setter Property="Opacity" Value="0.5"/>
+    </Style>
+
+    <!-- =============================================
+         Icon Button Style (Toolbar)
+         ============================================= -->
+    <Style Selector="Button.icon">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="CornerRadius" Value="4"/>
+        <Setter Property="Padding" Value="8"/>
+        <Setter Property="Width" Value="36"/>
+        <Setter Property="Height" Value="36"/>
+    </Style>
+
+    <Style Selector="Button.icon:pointerover">
+        <Setter Property="Background" Value="{DynamicResource AppTertiaryBackgroundBrush}"/>
+    </Style>
+
+    <Style Selector="Button.icon:pressed">
+        <Setter Property="Background" Value="{DynamicResource AppSecondaryBackgroundBrush}"/>
+    </Style>
+
+    <Style Selector="Button.icon:disabled">
+        <Setter Property="Opacity" Value="0.4"/>
+    </Style>
+
+    <!-- =============================================
+         Modern ListBox Styles
+         ============================================= -->
+    <Style Selector="ListBox.modern">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+    </Style>
+
+    <Style Selector="ListBox.modern ListBoxItem">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="CornerRadius" Value="4"/>
+        <Setter Property="Padding" Value="12,8"/>
+        <Setter Property="Margin" Value="4,2"/>
+    </Style>
+
+    <Style Selector="ListBox.modern ListBoxItem:pointerover">
+        <Setter Property="Background" Value="{DynamicResource AppTertiaryBackgroundBrush}"/>
+    </Style>
+
+    <Style Selector="ListBox.modern ListBoxItem:selected">
+        <Setter Property="Background" Value="{DynamicResource AccentBrush}"/>
+        <Setter Property="Foreground" Value="White"/>
+    </Style>
+
+    <!-- =============================================
+         Modern Menu Styles
+         ============================================= -->
+    <Style Selector="Menu.modern">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
+        <Setter Property="Padding" Value="0"/>
+    </Style>
+
+    <Style Selector="Menu.modern MenuItem">
+        <Setter Property="Padding" Value="8,4"/>
+    </Style>
+
+    <Style Selector="Menu.modern MenuItem:pointerover">
+        <Setter Property="Background" Value="{DynamicResource AppTertiaryBackgroundBrush}"/>
+    </Style>
+
+    <!-- =============================================
+         ScrollBar Styles
+         ============================================= -->
+    <Style Selector="ScrollBar">
+        <Setter Property="Background" Value="Transparent"/>
+    </Style>
+
+    <Style Selector="ScrollBar Thumb">
+        <Setter Property="Background" Value="{DynamicResource SecondaryTextBrush}"/>
+        <Setter Property="CornerRadius" Value="4"/>
+    </Style>
+
+    <Style Selector="ScrollBar Thumb:pointerover">
+        <Setter Property="Background" Value="{DynamicResource PrimaryTextBrush}"/>
+    </Style>
+
+    <!-- =============================================
+         Separator Style
+         ============================================= -->
+    <Style Selector="Separator.modern">
+        <Setter Property="Background" Value="{DynamicResource SidebarBorderBrush}"/>
+    </Style>
+
+    <!-- =============================================
+         Status Card Border Styles
+         ============================================= -->
+    <Style Selector="Border.statuscard.modified">
+        <Setter Property="Background" Value="{DynamicResource ModifiedBrush}"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="Padding" Value="12"/>
+        <Setter Property="Height" Value="50"/>
+    </Style>
+
+    <Style Selector="Border.statuscard.added">
+        <Setter Property="Background" Value="{DynamicResource AddedBrush}"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="Padding" Value="12"/>
+        <Setter Property="Height" Value="50"/>
+    </Style>
+
+    <Style Selector="Border.statuscard.deleted">
+        <Setter Property="Background" Value="{DynamicResource DeletedBrush}"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="Padding" Value="12"/>
+        <Setter Property="Height" Value="50"/>
+    </Style>
+
+    <Style Selector="Border.statuscard.conflicted">
+        <Setter Property="Background" Value="{DynamicResource ConflictedBrush}"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="Padding" Value="12"/>
+        <Setter Property="Height" Value="50"/>
+    </Style>
+
+    <!-- Status Card Text Style (White text on colored background) -->
+    <Style Selector="TextBlock.statuscard">
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+    </Style>
+
+</Styles>

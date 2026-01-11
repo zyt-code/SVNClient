@@ -1,0 +1,213 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:Svns.ViewModels"
+        xmlns:material="using:Material.Icons.Avalonia"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="650" d:DesignHeight="600"
+        x:Class="Svns.Views.Dialogs.PropertyDialog"
+        x:DataType="vm:PropertyViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="SVN Properties - Svns"
+        Classes="dialog medium"
+        Width="650" Height="600"
+        MinWidth="550" MinHeight="500"
+        Background="{DynamicResource AppBackgroundBrush}"
+        WindowStartupLocation="CenterOwner">
+
+    <Design.DataContext>
+        <vm:PropertyViewModel/>
+    </Design.DataContext>
+
+    <Grid RowDefinitions="Auto,*,Auto">
+        <!-- Header -->
+        <Border Grid.Row="0" Classes="dialog-header">
+            <Grid ColumnDefinitions="Auto,*">
+                <material:MaterialIcon Grid.Column="0" Kind="TagMultiple" Width="32" Height="32"
+                                       Foreground="{DynamicResource AccentBrush}"
+                                       VerticalAlignment="Center"
+                                       Margin="0,0,16,0"/>
+                <StackPanel Grid.Column="1" Spacing="4" VerticalAlignment="Center">
+                    <TextBlock Text="SVN Properties" FontSize="20" FontWeight="SemiBold"
+                               Foreground="{DynamicResource PrimaryTextBrush}"/>
+                    <TextBlock Text="{Binding FileName}"
+                               FontSize="13"
+                               Foreground="{DynamicResource SecondaryTextBrush}"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Content -->
+        <Grid Grid.Row="1" RowDefinitions="*,Auto" Margin="24,16">
+            <!-- Properties List -->
+            <Border Grid.Row="0"
+                    Background="{DynamicResource CardBackgroundBrush}"
+                    BorderBrush="{DynamicResource CardBorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    ClipToBounds="True">
+                <Grid RowDefinitions="Auto,*">
+                    <!-- List Header -->
+                    <Border Grid.Row="0"
+                            Background="{DynamicResource AppSecondaryBackgroundBrush}"
+                            Padding="16,10">
+                        <Grid ColumnDefinitions="150,*,Auto">
+                            <TextBlock Grid.Column="0" Text="Property" FontSize="12" FontWeight="SemiBold"
+                                       Foreground="{DynamicResource SecondaryTextBrush}"/>
+                            <TextBlock Grid.Column="1" Text="Value" FontSize="12" FontWeight="SemiBold"
+                                       Foreground="{DynamicResource SecondaryTextBrush}"/>
+                            <TextBlock Grid.Column="2" Text="Actions" FontSize="12" FontWeight="SemiBold"
+                                       Foreground="{DynamicResource SecondaryTextBrush}" Width="80"
+                                       HorizontalAlignment="Center"/>
+                        </Grid>
+                    </Border>
+
+                    <!-- Properties -->
+                    <ListBox Grid.Row="1"
+                             ItemsSource="{Binding Properties}"
+                             SelectedItem="{Binding SelectedProperty}"
+                             Background="Transparent"
+                             Padding="8">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Border Padding="8,6" CornerRadius="4">
+                                    <Grid ColumnDefinitions="150,*,Auto">
+                                        <!-- Property Name -->
+                                        <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="6"
+                                                    VerticalAlignment="Center">
+                                            <material:MaterialIcon Kind="Tag" Width="14" Height="14"
+                                                                   Foreground="{DynamicResource AccentBrush}"/>
+                                            <TextBlock Text="{Binding Name}"
+                                                       FontSize="12"
+                                                       FontWeight="Medium"
+                                                       Foreground="{DynamicResource PrimaryTextBrush}"
+                                                       TextTrimming="CharacterEllipsis"/>
+                                        </StackPanel>
+
+                                        <!-- Property Value -->
+                                        <TextBox Grid.Column="1"
+                                                 Text="{Binding Value}"
+                                                 FontSize="12"
+                                                 FontFamily="Consolas"
+                                                 Background="{DynamicResource InputBackgroundBrush}"
+                                                 BorderBrush="{DynamicResource InputBorderBrush}"
+                                                 BorderThickness="1"
+                                                 CornerRadius="4"
+                                                 Padding="8,4"
+                                                 Margin="8,0"/>
+
+                                        <!-- Modified indicator and actions -->
+                                        <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="4"
+                                                    Width="80" HorizontalAlignment="Center">
+                                            <Ellipse Width="8" Height="8"
+                                                     Fill="#FF9800"
+                                                     VerticalAlignment="Center"
+                                                     IsVisible="{Binding IsModified}"
+                                                     ToolTip.Tip="Modified"/>
+                                            <Button ToolTip.Tip="Delete property"
+                                                    Command="{Binding $parent[Window].((vm:PropertyViewModel)DataContext).DeletePropertyCommand}"
+                                                    Classes="icon"
+                                                    Padding="4">
+                                                <material:MaterialIcon Kind="Delete" Width="14" Height="14"
+                                                                       Foreground="#F44336"/>
+                                            </Button>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
+            </Border>
+
+            <!-- Add New Property -->
+            <Border Grid.Row="1"
+                    Background="{DynamicResource CardBackgroundBrush}"
+                    BorderBrush="{DynamicResource CardBorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="16"
+                    Margin="0,16,0,0">
+                <StackPanel Spacing="12">
+                    <TextBlock Text="Add New Property" FontSize="13" FontWeight="SemiBold"
+                               Foreground="{DynamicResource PrimaryTextBrush}"/>
+
+                    <Grid ColumnDefinitions="*,*,Auto" RowDefinitions="Auto,Auto">
+                        <!-- Property Name -->
+                        <StackPanel Grid.Row="0" Grid.Column="0" Spacing="4" Margin="0,0,8,0">
+                            <TextBlock Text="Name" FontSize="11"
+                                       Foreground="{DynamicResource SecondaryTextBrush}"/>
+                            <ComboBox ItemsSource="{Binding CommonProperties}"
+                                      Text="{Binding NewPropertyName}"
+                                      IsEditable="True"
+                                      MinHeight="32"
+                                      FontSize="12"/>
+                        </StackPanel>
+
+                        <!-- Property Value -->
+                        <StackPanel Grid.Row="0" Grid.Column="1" Spacing="4" Margin="8,0,8,0">
+                            <TextBlock Text="Value" FontSize="11"
+                                       Foreground="{DynamicResource SecondaryTextBrush}"/>
+                            <TextBox Text="{Binding NewPropertyValue}"
+                                     Watermark="Enter value..."
+                                     MinHeight="32"
+                                     FontSize="12"
+                                     FontFamily="Consolas"/>
+                        </StackPanel>
+
+                        <!-- Add Button -->
+                        <Button Grid.Row="0" Grid.Column="2"
+                                Content="Add"
+                                Command="{Binding AddPropertyCommand}"
+                                VerticalAlignment="Bottom"
+                                Padding="16,6"
+                                MinHeight="32"
+                                Classes="primary"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <!-- Footer -->
+        <Border Grid.Row="2" Classes="dialog-footer">
+            <Grid ColumnDefinitions="*,Auto,Auto,Auto">
+                <!-- Status -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12"
+                            IsVisible="{Binding IsLoading}">
+                    <ProgressBar Width="80" Height="3" IsIndeterminate="True"/>
+                    <TextBlock Text="{Binding StatusMessage}"
+                               FontSize="12"
+                               Foreground="{DynamicResource SecondaryTextBrush}"
+                               VerticalAlignment="Center"/>
+                </StackPanel>
+
+                <TextBlock Grid.Column="0"
+                           Text="{Binding StatusMessage}"
+                           FontSize="12"
+                           Foreground="{DynamicResource SecondaryTextBrush}"
+                           VerticalAlignment="Center"
+                           IsVisible="{Binding !IsLoading}"/>
+
+                <Button Grid.Column="1"
+                        Content="Refresh"
+                        Command="{Binding LoadPropertiesCommand}"
+                        Padding="16,8"
+                        Margin="0,0,12,0"/>
+
+                <Button Grid.Column="2"
+                        Content="Save Changes"
+                        Command="{Binding SavePropertyCommand}"
+                        Padding="16,8"
+                        Margin="0,0,12,0"
+                        IsEnabled="{Binding SelectedProperty.IsModified}"
+                        Classes="primary"/>
+
+                <Button Grid.Column="3"
+                        Content="Close"
+                        Command="{Binding CloseCommand}"
+                        Padding="16,8"/>
+            </Grid>
+        </Border>
+    </Grid>
+
+</Window>
