@@ -1,0 +1,98 @@
+name: Release Build
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+
+env:
+  DOTNET_VERSION: '9.0.x'
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            name: windows
+            rid: win-x64
+            extension: zip
+          - os: macos-latest
+            name: macos
+            rid: osx-x64
+            extension: zip
+          - os: macos-latest
+            name: macos-arm64
+            rid: osx-arm64
+            extension: zip
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore dependencies
+        run: dotnet restore Svns.csproj
+
+      - name: Build Windows
+        if: matrix.name == 'windows'
+        run: |
+          dotnet publish Svns.csproj -c Release -r ${{ matrix.rid }} --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o publish/${{ matrix.rid }}
+
+      - name: Build macOS
+        if: startsWith(matrix.name, 'macos')
+        run: |
+          dotnet publish Svns.csproj -c Release -r ${{ matrix.rid }} --self-contained true -p:PublishSingleFile=true -o publish/${{ matrix.rid }}
+
+      - name: Create Windows Archive
+        if: matrix.name == 'windows'
+        run: |
+          cd publish/${{ matrix.rid }}
+          7z a -tzip ../../Svns-${{ matrix.rid }}.${{ matrix.extension }} *
+
+      - name: Create macOS Archive
+        if: startsWith(matrix.name, 'macos')
+        run: |
+          cd publish/${{ matrix.rid }}
+          zip -r ../../Svns-${{ matrix.rid }}.${{ matrix.extension }} *
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Svns-${{ matrix.rid }}
+          path: Svns-${{ matrix.rid }}.${{ matrix.extension }}
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Display structure of downloaded files
+        run: ls -R artifacts
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/**/*.zip
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
