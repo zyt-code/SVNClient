@@ -82,6 +82,7 @@ public partial class CheckoutViewModel : ViewModelBase
         // This would open a folder browser dialog
         // For now, we'll just leave it for the user to type
         StatusMessage = "Please enter or paste the local path";
+        await Task.CompletedTask;
     }
 
     [RelayCommand]

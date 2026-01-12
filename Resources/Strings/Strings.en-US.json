@@ -24,6 +24,7 @@
   "Common.Processing": "Processing...",
   "Common.Browse": "Browse...",
   "Common.Select": "Select",
+  "Common.Selected": "selected",
   "Common.SelectAll": "Select All",
   "Common.DeselectAll": "Deselect All",
   "Common.Copy": "Copy",
@@ -97,15 +98,22 @@
   "Operation.ResolveConflict": "Resolve Conflict",
 
   "Commit.Title": "Commit",
+  "Commit.Subtitle": "Select files and enter a commit message",
   "Commit.Message": "Commit Message",
   "Commit.MessagePlaceholder": "Enter commit message...",
   "Commit.Files": "Files to Commit",
+  "Commit.FilesWithChanges": "Files with changes: {0}",
+  "Commit.FilterFiles": "Filter files...",
+  "Commit.SelectAll": "Select All",
+  "Commit.Deselect": "Deselect",
+  "Commit.SelectedCount": "{0}/{1} selected",
   "Commit.KeepLocks": "Keep locks",
   "Commit.NoFilesSelected": "No files selected for commit",
   "Commit.EmptyMessage": "Commit message cannot be empty",
   "Commit.Success": "Commit successful. Committed revision {0}.",
   "Commit.Failed": "Commit failed: {0}",
   "Commit.RecentMessages": "Recent Messages",
+  "Commit.ErrorLoading": "Error loading changes: {0}",
 
   "Update.Title": "Update",
   "Update.Revision": "Revision",
@@ -289,10 +297,17 @@
   "Add.Failed": "Add failed: {0}",
 
   "Delete.Title": "Delete",
+  "Delete.TitleSingle": "Delete File",
+  "Delete.TitleMultiple": "Delete {0} Files",
   "Delete.Confirm": "Are you sure you want to delete the selected items?",
+  "Delete.ConfirmMessage": "Are you sure you want to delete {0}?\n\nThis will schedule the file(s) for deletion from version control.",
+  "Delete.Warning": "This action will schedule files for deletion from version control",
+  "Delete.Recoverable": "You can recover files with Update before committing",
   "Delete.KeepLocal": "Keep local copy",
-  "Delete.Success": "Delete successful",
+  "Delete.Success": "Deleted: {0}",
   "Delete.Failed": "Delete failed: {0}",
+  "Delete.Cancelled": "Delete cancelled",
+  "Delete.CannotDelete": "Cannot delete file with status: {0}",
 
   "Rename.Title": "Rename",
   "Rename.NewName": "New Name",
@@ -335,5 +350,11 @@
   "RelativeTime.MonthsAgo": "{0} months ago",
   "RelativeTime.YearAgo": "{0} year ago",
   "RelativeTime.YearsAgo": "{0} years ago",
-  "RelativeTime.NotAvailable": "N/A"
-}
+  "RelativeTime.NotAvailable": "N/A",
+
+  "Status.CommittingChanges": "Committing changes...",
+  "Status.Deleting": "Deleting {0}...",
+  "Status.LoadingChanges": "Loading changes...",
+  "Status.FileNotFound": "File not found: {0}",
+  "Status.NoFileSelected": "No file selected",
+  "Status.WindowNotInitialized": "Error: Window not initialized"

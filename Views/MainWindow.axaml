@@ -29,6 +29,7 @@
         <converters:SvnPathActionToStringConverter x:Key="PathActionToStringConverter"/>
         <converters:FileTypeToIconConverter x:Key="FileTypeToIconConverter"/>
         <converters:IntToVisibilityConverter x:Key="IntToVisibilityConverter"/>
+        <converters:BoolToGridLengthConverter x:Key="BoolToGridLengthConverter"/>
     </Window.Resources>
 
     <Grid RowDefinitions="Auto,*,Auto">
@@ -263,7 +264,7 @@
         <!-- ==============================================
              Main Content Area
              ============================================== -->
-        <Grid Grid.Row="1" ColumnDefinitions="280,8,*,8,300">
+        <Grid Grid.Row="1" ColumnDefinitions="280,8,*,Auto,Auto">
             <!-- ==============================================
                  Left Panel - Working Copy Info
                  ============================================== -->
@@ -370,7 +371,8 @@
                                          BorderThickness="0"
                                          Padding="8"
                                          FontSize="13"
-                                         VerticalAlignment="Center"/>
+                                         VerticalAlignment="Center"
+                                         HorizontalContentAlignment="Center"/>
                             </Grid>
                         </Border>
 
@@ -399,6 +401,10 @@
                             <Button Command="{Binding ShowHistoryCommand}" ToolTip.Tip="History (Ctrl+L)" Classes="icon">
                                 <material:MaterialIcon Kind="History" Width="18" Height="18"/>
                             </Button>
+                            <Separator Classes="modern" Margin="4,0"/>
+                            <Button Command="{Binding ToggleHistoryPanelCommand}" ToolTip.Tip="Toggle History Panel" Classes="icon">
+                                <material:MaterialIcon Kind="TimelineText" Width="18" Height="18"/>
+                            </Button>
                         </StackPanel>
                     </Grid>
                 </Border>
@@ -408,7 +414,25 @@
                           SelectedItem="{Binding SelectedFile}"
                           MinHeight="200"
                           Margin="0,60,0,0"
-                          Padding="8,4">
+                          Padding="0">
+                    <TreeView.Styles>
+                        <Style Selector="TreeViewItem">
+                            <Setter Property="Padding" Value="0"/>
+                            <Setter Property="Margin" Value="0"/>
+                        </Style>
+                        <Style Selector="TreeViewItem /template/ ContentPresenter">
+                            <Setter Property="Margin" Value="0"/>
+                        </Style>
+                        <Style Selector="TreeViewItem:pointerover">
+                            <Setter Property="Background" Value="{DynamicResource AppTertiaryBackgroundBrush}"/>
+                        </Style>
+                        <Style Selector="TreeViewItem:selected">
+                            <Setter Property="Background" Value="{DynamicResource AccentBrush}"/>
+                        </Style>
+                        <Style Selector="TreeViewItem:selected /template/ ContentPresenter">
+                            <Setter Property="Background" Value="{DynamicResource AccentBrush}"/>
+                        </Style>
+                    </TreeView.Styles>
                     <TreeView.ContextMenu>
                         <ContextMenu>
                             <MenuItem Header="Update" Command="{Binding UpdateCommand}">
@@ -489,17 +513,9 @@
                     </TreeView.ContextMenu>
                     <TreeView.DataTemplates>
                         <TreeDataTemplate DataType="models:SvnStatus" ItemsSource="{Binding Children}">
-                            <Grid ColumnDefinitions="Auto,Auto,Auto,*,Auto" MinHeight="26">
-                                <!-- Checkbox for multi-select commit -->
-                                <CheckBox Grid.Column="0"
-                                          IsChecked="{Binding IsSelected}"
-                                          VerticalAlignment="Center"
-                                          Margin="0,0,4,0"
-                                          MinWidth="0"
-                                          Padding="0"/>
-
+                            <Grid ColumnDefinitions="Auto,Auto,*,Auto" MinHeight="26">
                                 <!-- File/Folder Type Icon (Material Icons) -->
-                                <material:MaterialIcon Grid.Column="1"
+                                <material:MaterialIcon Grid.Column="0"
                                                        Kind="{Binding Path, Converter={StaticResource FileTypeToIconConverter}}"
                                                        Width="18" Height="18"
                                                        Margin="0,0,6,0"
@@ -507,7 +523,7 @@
                                                        Foreground="{DynamicResource PrimaryTextBrush}"/>
 
                                 <!-- Status Icon -->
-                                <TextBlock Grid.Column="2"
+                                <TextBlock Grid.Column="1"
                                            Text="{Binding WorkingCopyStatus, Converter={StaticResource StatusToIconConverter}}"
                                            Foreground="{Binding WorkingCopyStatus, Converter={StaticResource StatusToColorConverter}}"
                                            FontSize="11"
@@ -515,7 +531,7 @@
                                            VerticalAlignment="Center"/>
 
                                 <!-- File/Folder Name -->
-                                <TextBlock Grid.Column="3"
+                                <TextBlock Grid.Column="2"
                                            Text="{Binding Name}"
                                            Classes="body"
                                            TextTrimming="CharacterEllipsis"
@@ -523,7 +539,7 @@
                                            FontSize="13"/>
 
                                 <!-- Status Badge - Only show for meaningful status -->
-                                <Border Grid.Column="4"
+                                <Border Grid.Column="3"
                                         Background="{Binding WorkingCopyStatus, Converter={StaticResource StatusToColorConverter}}"
                                         CornerRadius="3"
                                         Padding="5,2"
@@ -541,7 +557,8 @@
             </Grid>
 
             <!-- Grid Splitter for Right Panel -->
-            <GridSplitter Grid.Column="3" ResizeDirection="Columns" Background="Transparent" Width="8"/>
+            <GridSplitter Grid.Column="3" ResizeDirection="Columns" Background="Transparent"
+                          Width="{Binding ShowHistoryPanel, Converter={StaticResource BoolToGridLengthConverter}, ConverterParameter=8}"/>
 
             <!-- ==============================================
                  Right Panel - Commit History
@@ -549,7 +566,8 @@
             <Border Grid.Column="4"
                     Background="{DynamicResource SidebarBackgroundBrush}"
                     BorderBrush="{DynamicResource SidebarBorderBrush}"
-                    BorderThickness="1,0,0,0">
+                    BorderThickness="1,0,0,0"
+                    Width="{Binding ShowHistoryPanel, Converter={StaticResource BoolToGridLengthConverter}, ConverterParameter=300}">
                 <Grid RowDefinitions="Auto,Auto,*">
                     <!-- ==============================================
                          Compact Header with Filter Toggle
@@ -592,7 +610,8 @@
                                     BorderBrush="{DynamicResource InputBorderBrush}"
                                     BorderThickness="1"
                                     CornerRadius="6"
-                                    Padding="0">
+                                    Padding="0"
+                                    Height="32">
                                 <Grid ColumnDefinitions="Auto,*">
                                     <material:MaterialIcon Grid.Column="0" Kind="Magnify" Width="14" Height="14"
                                                            Foreground="{DynamicResource DisabledTextBrush}"
@@ -603,8 +622,10 @@
                                              Watermark="Search commits..."
                                              Background="Transparent"
                                              BorderThickness="0"
-                                             Padding="8,5"
-                                             FontSize="12"/>
+                                             Padding="8,4"
+                                             FontSize="12"
+                                             VerticalContentAlignment="Center"
+                                             HorizontalContentAlignment="Left"/>
                                 </Grid>
                             </Border>
 

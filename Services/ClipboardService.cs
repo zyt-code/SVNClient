@@ -3,8 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Threading;
 using Avalonia.Controls;
-
-#pragma warning disable AVLN1000 // Suppress obsolete warning for GetTextAsync
+using Avalonia.Input;
 
 namespace Svns.Services;
 
@@ -63,7 +62,9 @@ public class ClipboardService
                 if (Avalonia.Application.Current?.ApplicationLifetime is Avalonia.Controls.ApplicationLifetimes.IClassicDesktopStyleApplicationLifetime desktop
                     && desktop.MainWindow?.Clipboard != null)
                 {
+#pragma warning disable CS0618
                     result = await desktop.MainWindow.Clipboard.GetTextAsync() ?? string.Empty;
+#pragma warning restore CS0618
                 }
             });
             return result;

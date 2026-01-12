@@ -214,4 +214,77 @@
         <Setter Property="FontWeight" Value="SemiBold"/>
     </Style>
 
+    <!-- =============================================
+         TreeView Styles - Full width selection
+         ============================================= -->
+    <Style Selector="TreeView">
+        <Setter Property="Padding" Value="0"/>
+    </Style>
+
+    <Style Selector="TreeViewItem">
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Margin" Value="0"/>
+    </Style>
+
+    <Style Selector="TreeDataTemplate Grid">
+        <Setter Property="Margin" Value="0"/>
+    </Style>
+
+    <!-- =============================================
+         File List Toolbar Styles
+         ============================================= -->
+    <Style Selector="Border.file-list-toolbar">
+        <Setter Property="Background" Value="{DynamicResource AppSecondaryBackgroundBrush}"/>
+        <Setter Property="CornerRadius" Value="8,8,0,0"/>
+        <Setter Property="Padding" Value="8,6"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource CardBorderBrush}"/>
+        <Setter Property="BorderThickness" Value="1,1,0,1"/>
+    </Style>
+
+    <!-- File list card with toolbar - only bottom rounded corners -->
+    <Style Selector="Border.file-list-card">
+        <Setter Property="Background" Value="{DynamicResource CardBackgroundBrush}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource CardBorderBrush}"/>
+        <Setter Property="BorderThickness" Value="1,0,1,1"/>
+        <Setter Property="CornerRadius" Value="0,0,8,8"/>
+        <Setter Property="Padding" Value="0"/>
+    </Style>
+
+    <Style Selector="Border.changelist-dropdown">
+        <Setter Property="Background" Value="{DynamicResource AppTertiaryBackgroundBrush}"/>
+        <Setter Property="CornerRadius" Value="4"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Height" Value="28"/>
+        <Setter Property="Cursor" Value="Hand"/>
+    </Style>
+
+    <Style Selector="Border.changelist-dropdown:pointerover">
+        <Setter Property="Background" Value="{DynamicResource AppSecondaryBackgroundBrush}"/>
+    </Style>
+
+    <Style Selector="Button.toolbar">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="CornerRadius" Value="4"/>
+        <Setter Property="Padding" Value="10,6"/>
+        <Setter Property="Height" Value="32"/>
+        <Setter Property="FontSize" Value="13"/>
+    </Style>
+
+    <Style Selector="Button.toolbar:pointerover">
+        <Setter Property="Background" Value="{DynamicResource AppTertiaryBackgroundBrush}"/>
+    </Style>
+
+    <Style Selector="Button.toolbar:pressed">
+        <Setter Property="Background" Value="{DynamicResource AccentBrush}"/>
+        <Setter Property="Foreground" Value="White"/>
+    </Style>
+
+    <Style Selector="Separator.toolbar">
+        <Setter Property="Background" Value="{DynamicResource SidebarBorderBrush}"/>
+        <Setter Property="Margin" Value="4,0"/>
+        <Setter Property="Width" Value="1"/>
+    </Style>
+
 </Styles>

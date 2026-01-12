@@ -24,6 +24,7 @@
   "Common.Processing": "处理中...",
   "Common.Browse": "浏览...",
   "Common.Select": "选择",
+  "Common.Selected": "已选",
   "Common.SelectAll": "全选",
   "Common.DeselectAll": "取消全选",
   "Common.Copy": "复制",
@@ -97,15 +98,22 @@
   "Operation.ResolveConflict": "解决冲突",
 
   "Commit.Title": "提交",
+  "Commit.Subtitle": "选择文件并输入提交消息",
   "Commit.Message": "提交消息",
   "Commit.MessagePlaceholder": "输入提交消息...",
   "Commit.Files": "要提交的文件",
+  "Commit.FilesWithChanges": "有更改的文件：{0}",
+  "Commit.FilterFiles": "筛选文件...",
+  "Commit.SelectAll": "全选",
+  "Commit.Deselect": "取消选择",
+  "Commit.SelectedCount": "已选 {0}/{1}",
   "Commit.KeepLocks": "保持锁定",
   "Commit.NoFilesSelected": "没有选择要提交的文件",
   "Commit.EmptyMessage": "提交消息不能为空",
   "Commit.Success": "提交成功。已提交修订版本 {0}。",
   "Commit.Failed": "提交失败：{0}",
   "Commit.RecentMessages": "最近的消息",
+  "Commit.ErrorLoading": "加载更改时出错：{0}",
 
   "Update.Title": "更新",
   "Update.Revision": "修订版本",
@@ -289,10 +297,17 @@
   "Add.Failed": "添加失败：{0}",
 
   "Delete.Title": "删除",
+  "Delete.TitleSingle": "删除文件",
+  "Delete.TitleMultiple": "删除 {0} 个文件",
   "Delete.Confirm": "确定要删除选中的项目吗？",
+  "Delete.ConfirmMessage": "确定要删除 {0} 吗？\n\n这将标记文件从版本控制中删除。",
+  "Delete.Warning": "此操作将把文件标记为从版本控制中删除",
+  "Delete.Recoverable": "提交前可用更新恢复文件",
   "Delete.KeepLocal": "保留本地副本",
-  "Delete.Success": "删除成功",
+  "Delete.Success": "已删除：{0}",
   "Delete.Failed": "删除失败：{0}",
+  "Delete.Cancelled": "已取消删除",
+  "Delete.CannotDelete": "无法删除状态为 {0} 的文件",
 
   "Rename.Title": "重命名",
   "Rename.NewName": "新名称",
@@ -335,5 +350,11 @@
   "RelativeTime.MonthsAgo": "{0} 个月前",
   "RelativeTime.YearAgo": "{0} 年前",
   "RelativeTime.YearsAgo": "{0} 年前",
-  "RelativeTime.NotAvailable": "不可用"
-}
+  "RelativeTime.NotAvailable": "不可用",
+
+  "Status.CommittingChanges": "正在提交更改...",
+  "Status.Deleting": "正在删除 {0}...",
+  "Status.LoadingChanges": "正在加载更改...",
+  "Status.FileNotFound": "文件未找到：{0}",
+  "Status.NoFileSelected": "未选择文件",
+  "Status.WindowNotInitialized": "错误：窗口未初始化"

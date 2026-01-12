@@ -10,17 +10,17 @@ public class CommitViewModelTests
     public void Constructor_InitializesEmptyCommitMessage()
     {
         // Note: CommitViewModel requires WorkingCopyService which needs mocking
-        // These tests focus on the CommitFileItem class
-        var item = new CommitFileItem();
+        // These tests focus on the CommitFileNode class
+        var item = new CommitFileNode();
         Assert.Equal(string.Empty, item.Path);
         Assert.Equal(string.Empty, item.Name);
     }
 
     [Fact]
-    public void CommitFileItem_IsSelected_DefaultsToTrue()
+    public void CommitFileNode_IsChecked_DefaultsToTrue()
     {
-        var item = new CommitFileItem();
-        Assert.True(item.IsSelected);
+        var item = new CommitFileNode();
+        Assert.True(item.IsChecked);
     }
 
     [Theory]
@@ -29,23 +29,23 @@ public class CommitViewModelTests
     [InlineData(SvnStatusType.Deleted, "Deleted")]
     [InlineData(SvnStatusType.Replaced, "Replaced")]
     [InlineData(SvnStatusType.Conflicted, "Conflicted")]
-    public void CommitFileItem_StatusText_ReturnsExpected(SvnStatusType status, string expected)
+    public void CommitFileNode_StatusText_ReturnsExpected(SvnStatusType status, string expected)
     {
-        var item = new CommitFileItem { Status = status };
+        var item = new CommitFileNode { Status = status };
         Assert.Equal(expected, item.StatusText);
     }
 
     [Fact]
-    public void CommitFileItem_StatusText_ReturnsEnumName_ForUnknownStatus()
+    public void CommitFileNode_StatusText_ReturnsEnumName_ForUnknownStatus()
     {
-        var item = new CommitFileItem { Status = SvnStatusType.Merged };
+        var item = new CommitFileNode { Status = SvnStatusType.Merged };
         Assert.Equal("Merged", item.StatusText);
     }
 
     [Fact]
-    public void CommitFileItem_PathAndName_CanBeSet()
+    public void CommitFileNode_PathAndName_CanBeSet()
     {
-        var item = new CommitFileItem
+        var item = new CommitFileNode
         {
             Path = @"C:\repo\file.cs",
             Name = "file.cs"
@@ -55,11 +55,11 @@ public class CommitViewModelTests
     }
 
     [Fact]
-    public void CommitFileItem_IsSelected_CanBeToggled()
+    public void CommitFileNode_IsChecked_CanBeToggled()
     {
-        var item = new CommitFileItem { IsSelected = true };
-        item.IsSelected = false;
-        Assert.False(item.IsSelected);
+        var item = new CommitFileNode { IsChecked = true };
+        item.IsChecked = false;
+        Assert.False(item.IsChecked);
     }
 }
 
@@ -145,7 +145,7 @@ public class CommitViewModelPropertyTests
     [Fact]
     public void Files_IsObservableCollection()
     {
-        // Test that Files is an ObservableCollection<CommitFileItem>
+        // Test that Files is an ObservableCollection<CommitFileNode>
         var propertyInfo = typeof(CommitViewModel).GetProperty("Files");
         Assert.NotNull(propertyInfo);
     }
@@ -169,13 +169,13 @@ public class CommitViewModelPropertyTests
     }
 }
 
-public class CommitFileItemPropertyTests
+public class CommitFileNodePropertyTests
 {
     [Fact]
     public void Path_IsObservable()
     {
         // Test that Path property is observable
-        var propertyInfo = typeof(CommitFileItem).GetProperty("Path");
+        var propertyInfo = typeof(CommitFileNode).GetProperty("Path");
         Assert.NotNull(propertyInfo);
         Assert.Equal(typeof(string), propertyInfo.PropertyType);
     }
@@ -184,7 +184,7 @@ public class CommitFileItemPropertyTests
     public void Name_IsObservable()
     {
         // Test that Name property is observable
-        var propertyInfo = typeof(CommitFileItem).GetProperty("Name");
+        var propertyInfo = typeof(CommitFileNode).GetProperty("Name");
         Assert.NotNull(propertyInfo);
         Assert.Equal(typeof(string), propertyInfo.PropertyType);
     }
@@ -193,16 +193,16 @@ public class CommitFileItemPropertyTests
     public void Status_IsObservable()
     {
         // Test that Status property is observable
-        var propertyInfo = typeof(CommitFileItem).GetProperty("Status");
+        var propertyInfo = typeof(CommitFileNode).GetProperty("Status");
         Assert.NotNull(propertyInfo);
         Assert.Equal(typeof(SvnStatusType), propertyInfo.PropertyType);
     }
 
     [Fact]
-    public void IsSelected_IsObservable()
+    public void IsChecked_IsObservable()
     {
-        // Test that IsSelected property is observable
-        var propertyInfo = typeof(CommitFileItem).GetProperty("IsSelected");
+        // Test that IsChecked property is observable
+        var propertyInfo = typeof(CommitFileNode).GetProperty("IsChecked");
         Assert.NotNull(propertyInfo);
         Assert.Equal(typeof(bool), propertyInfo.PropertyType);
     }
@@ -214,7 +214,7 @@ public class CommitFileItemPropertyTests
         var allTypes = Enum.GetValues<SvnStatusType>();
         foreach (var type in allTypes)
         {
-            var item = new CommitFileItem { Status = type };
+            var item = new CommitFileNode { Status = type };
             var statusText = item.StatusText;
             Assert.NotNull(statusText);
             Assert.NotEmpty(statusText);
@@ -224,31 +224,31 @@ public class CommitFileItemPropertyTests
     [Theory]
     [InlineData(true)]
     [InlineData(false)]
-    public void CommitFileItem_IsSelected_SetAndGet(bool value)
+    public void CommitFileNode_IsChecked_SetAndGet(bool value)
     {
-        var item = new CommitFileItem { IsSelected = value };
-        Assert.Equal(value, item.IsSelected);
+        var item = new CommitFileNode { IsChecked = value };
+        Assert.Equal(value, item.IsChecked);
     }
 
     [Fact]
-    public void CommitFileItem_Status_DefaultsToZero()
+    public void CommitFileNode_Status_DefaultsToZero()
     {
-        var item = new CommitFileItem();
+        var item = new CommitFileNode();
         // Default value of enum is 0
         Assert.Equal((SvnStatusType)0, item.Status);
     }
 
     [Fact]
-    public void CommitFileItem_Path_DefaultsToEmpty()
+    public void CommitFileNode_Path_DefaultsToEmpty()
     {
-        var item = new CommitFileItem();
+        var item = new CommitFileNode();
         Assert.Equal(string.Empty, item.Path);
     }
 
     [Fact]
-    public void CommitFileItem_Name_DefaultsToEmpty()
+    public void CommitFileNode_Name_DefaultsToEmpty()
     {
-        var item = new CommitFileItem();
+        var item = new CommitFileNode();
         Assert.Equal(string.Empty, item.Name);
     }
 }

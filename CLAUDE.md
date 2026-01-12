@@ -40,8 +40,8 @@ dotnet test Svns.Tests --verbosity detailed
 
 ### Solution Configuration
 - Main project targets **.NET 9.0**
-- Test project targets **.NET 10.0**
-- Uses **xUnit** for testing with 700+ tests
+- Test project targets **.NET 9.0**
+- Uses **xUnit** for testing with 745+ tests
 
 ## Architecture
 
@@ -58,7 +58,7 @@ Services/
 ├── AppSettingsService.cs
 └── SvnLogCacheService.cs
 
-Models/                 # Data models (SvnStatus, SvnInfo, SvnLogEntry, etc.)
+Models/                 # Data models (SvnStatus, SvnInfo, SvnLogEntry, SvnFileStateMachine)
 
 ViewModels/             # MVVM ViewModels using CommunityToolkit.Mvvm source generators
 
@@ -132,6 +132,63 @@ Status icons are defined in `Constants/SvnConstants.cs`:
 - ⚠ Conflicted (orange)
 - ? Unversioned (gray)
 - ! Missing (red)
+
+## State Machine for File Operations
+
+The `SvnFileStateMachine` class (Models/SvnFileStateMachine.cs) provides centralized state transition logic for SVN files:
+
+### Key Methods
+- `GetNextState(currentState, action)` - Returns the resulting state after an action, or null if invalid
+- `IsValidTransition(currentState, action)` - Checks if a transition is allowed
+- `GetValidActions(status)` - Returns all valid actions for a given state
+- `CanDelete(status)` / `CanRevert(status)` / `CanCommit(status)` - Helper methods for common operations
+- `GetRecommendedAction(status)` - Suggests the best action for a file's current state
+
+### Example Usage
+```csharp
+// Check if delete is allowed before performing operation
+if (!SvnFileStateMachine.CanDelete(file.WorkingCopyStatus))
+{
+    StatusMessage = string.Format(Localize.Get("Delete.CannotDelete"), file.StatusText);
+    return;
+}
+
+// Get the next state after an action
+var nextState = SvnFileStateMachine.GetNextState(SvnStatusType.Normal, SvnFileAction.Modify);
+// Returns: SvnStatusType.Modified
+```
+
+## Commit Dialog Improvements
+
+The commit dialog (`Views/Dialogs/CommitDialog.axaml`) includes:
+
+### Features
+- **Hierarchical File Tree**: TreeView with folders and files
+- **Three-State Checkboxes**: Parent checkboxes cascade to children; children update parent state
+- **Toolbar with Search**: Filter files by name
+- **Select All/Deselect Toggle**: Single button that toggles between states
+- **Status Count**: Shows selected/total file count
+
+### CommitFileNode Properties
+- `IsChecked` (bool?) - Three-state checkbox: true/false/null for indeterminate
+- `Status` (SvnStatusType) - Current SVN status
+- `Children` (ObservableCollection<CommitFileNode>) - Child nodes
+- `ShowStatusBadge` - Computed property for showing status badge
+
+## Delete Dialog
+
+The delete dialog (`Views/Dialogs/DeleteDialog.axaml`) provides:
+
+### Features
+- File preview with icons and status badges
+- Warning header for confirmation
+- Recovery hint text
+- Title dynamically updates based on file count (single/multiple)
+
+### Delete Operation Enhancements
+- **State Machine Validation**: Uses `SvnFileStateMachine.CanDelete()` to validate operations
+- **Unversioned File Handling**: Files with `Unversioned` or `Ignored` status are deleted directly from filesystem
+- **Versioned Files**: Use standard `svn delete` command
 
 ## Common File Patterns
 

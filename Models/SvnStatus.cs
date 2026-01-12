@@ -24,6 +24,11 @@ public partial class SvnStatus : ObservableObject
     public string Name => System.IO.Path.GetFileName(Path) ?? Path;
 
     /// <summary>
+    /// File name for display
+    /// </summary>
+    public string FileName => Name;
+
+    /// <summary>
     /// Whether this item is a file (vs directory)
     /// </summary>
     public bool IsFile => NodeType == SvnNodeType.File;
@@ -105,11 +110,7 @@ public partial class SvnStatus : ObservableObject
     /// <summary>
     /// Whether the item has local modifications
     /// </summary>
-    public bool HasLocalModifications =>
-        WorkingCopyStatus != SvnStatusType.None &&
-        WorkingCopyStatus != SvnStatusType.Normal &&
-        WorkingCopyStatus != SvnStatusType.Ignored &&
-        WorkingCopyStatus != SvnStatusType.External;
+    public bool HasLocalModifications => SvnFileStateMachine.HasLocalModifications(WorkingCopyStatus);
 
     /// <summary>
     /// Gets the display status (combining working copy and repository status)
@@ -131,6 +132,22 @@ public partial class SvnStatus : ObservableObject
             return "Normal";
         }
     }
+
+    /// <summary>
+    /// Gets the status text for display in badges
+    /// </summary>
+    public string StatusText => WorkingCopyStatus switch
+    {
+        SvnStatusType.Modified => "Modified",
+        SvnStatusType.Added => "Added",
+        SvnStatusType.Deleted => "Deleted",
+        SvnStatusType.Conflicted => "Conflicted",
+        SvnStatusType.Replaced => "Replaced",
+        SvnStatusType.Missing => "Missing",
+        SvnStatusType.Unversioned => "Unversioned",
+        SvnStatusType.Ignored => "Ignored",
+        _ => "Normal"
+    };
 }
 
 /// <summary>

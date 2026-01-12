@@ -12,6 +12,7 @@ using Avalonia.Controls;
 using Avalonia.Platform.Storage;
 using Svns.Models;
 using Svns.Services;
+using Svns.Services.Localization;
 using Svns.Services.Svn.Core;
 using Svns.Services.Svn.Operations;
 using System.Collections.ObjectModel;
@@ -121,6 +122,10 @@ public partial class MainWindowViewModel : ViewModelBase
     // Notification Center Properties
     [ObservableProperty]
     private bool _showNotificationCenter;
+
+    // History Panel Properties
+    [ObservableProperty]
+    private bool _showHistoryPanel;
 
     public MainWindowViewModel()
     {
@@ -352,6 +357,15 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         ShowNotificationCenter = !ShowNotificationCenter;
         _notificationService.TogglePanel();
+    }
+
+    /// <summary>
+    /// Toggles the history panel visibility
+    /// </summary>
+    [RelayCommand]
+    private void ToggleHistoryPanel()
+    {
+        ShowHistoryPanel = !ShowHistoryPanel;
     }
 
     /// <summary>
@@ -750,54 +764,88 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         if (SelectedFile == null)
         {
-            StatusMessage = "No file selected";
+            StatusMessage = Localize.Get("Status.NoFileSelected");
             return;
         }
 
         if (_ownerWindow == null)
         {
-            StatusMessage = "Error: Window not initialized";
+            StatusMessage = Localize.Get("Status.WindowNotInitialized");
             return;
         }
 
-        // Show confirmation dialog
-        var confirmed = await Views.Dialogs.ConfirmDialog.ShowAsync(
-            _ownerWindow,
-            "Delete File",
-            $"Are you sure you want to delete '{SelectedFile.Name}'?\n\nThis will schedule the file for deletion from version control.",
-            "Delete",
-            "Cancel");
+        // Check if deletion is allowed using state machine
+        if (!SvnFileStateMachine.CanDelete(SelectedFile.WorkingCopyStatus))
+        {
+            StatusMessage = string.Format(Localize.Get("Delete.CannotDelete"), SelectedFile.StatusText);
+            return;
+        }
+
+        // Show delete confirmation dialog with file preview
+        var confirmed = await Views.Dialogs.DeleteDialog.ShowAsync(_ownerWindow, new[] { SelectedFile });
 
         if (!confirmed)
         {
-            StatusMessage = "Delete cancelled";
+            StatusMessage = Localize.Get("Delete.Cancelled");
             return;
         }
 
         try
         {
             IsLoading = true;
-            StatusMessage = $"Deleting {SelectedFile.Name}...";
+            StatusMessage = string.Format(Localize.Get("Status.Deleting"), SelectedFile.Name);
 
-            var result = await _workingCopyService.DeleteAsync(SelectedFile.Path);
-
-            if (result.Success)
+            // Use state machine to determine deletion method
+            // Unversioned files are deleted directly from filesystem
+            if (SelectedFile.WorkingCopyStatus == SvnStatusType.Unversioned ||
+                SelectedFile.WorkingCopyStatus == SvnStatusType.Ignored)
             {
-                StatusMessage = $"Deleted: {SelectedFile.Name}";
+                DeleteFromFileSystem(SelectedFile.Path);
+                StatusMessage = string.Format(Localize.Get("Delete.Success"), SelectedFile.Name);
                 RefreshService.Instance.RequestRefresh(RefreshType.FileStatus);
             }
             else
             {
-                StatusMessage = $"Delete failed: {result.StandardError}";
+                // Versioned files use SVN delete
+                var result = await _workingCopyService.DeleteAsync(SelectedFile.Path);
+
+                if (result.Success)
+                {
+                    StatusMessage = string.Format(Localize.Get("Delete.Success"), SelectedFile.Name);
+                    RefreshService.Instance.RequestRefresh(RefreshType.FileStatus);
+                }
+                else
+                {
+                    StatusMessage = string.Format(Localize.Get("Delete.Failed"), result.StandardError);
+                }
             }
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Error deleting: {ex.Message}";
+            StatusMessage = string.Format(Localize.Get("Error.OperationFailed"), ex.Message);
         }
         finally
         {
             IsLoading = false;
+        }
+    }
+
+    /// <summary>
+    /// Deletes a file or directory directly from the filesystem
+    /// </summary>
+    private void DeleteFromFileSystem(string path)
+    {
+        if (File.Exists(path))
+        {
+            File.Delete(path);
+        }
+        else if (Directory.Exists(path))
+        {
+            Directory.Delete(path, recursive: true);
+        }
+        else
+        {
+            throw new FileNotFoundException("File not found", path);
         }
     }
 
