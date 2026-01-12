@@ -28,6 +28,7 @@ jobs:
             extension: zip
 
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
 
     steps:
       - name: Checkout
@@ -39,17 +40,17 @@ jobs:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Restore dependencies
-        run: dotnet restore Svns.csproj
+        run: dotnet restore
 
       - name: Build Windows
         if: matrix.name == 'windows'
         run: |
-          dotnet publish Svns.csproj -c Release -r ${{ matrix.rid }} --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o publish/${{ matrix.rid }}
+          dotnet publish -c Release -r ${{ matrix.rid }} --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o publish/${{ matrix.rid }}
 
       - name: Build macOS
         if: startsWith(matrix.name, 'macos')
         run: |
-          dotnet publish Svns.csproj -c Release -r ${{ matrix.rid }} --self-contained true -p:PublishSingleFile=true -o publish/${{ matrix.rid }}
+          dotnet publish -c Release -r ${{ matrix.rid }} --self-contained true -p:PublishSingleFile=true -o publish/${{ matrix.rid }}
 
       - name: Create Windows Archive
         if: matrix.name == 'windows'
@@ -68,10 +69,12 @@ jobs:
         with:
           name: Svns-${{ matrix.rid }}
           path: Svns-${{ matrix.rid }}.${{ matrix.extension }}
+          retention-days: 7
 
   release:
     needs: build
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     permissions:
       contents: write
 

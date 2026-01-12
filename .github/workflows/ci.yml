@@ -12,6 +12,7 @@ env:
 jobs:
   build-and-test:
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
 
     strategy:
       matrix:
@@ -34,10 +35,10 @@ jobs:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Restore dependencies
-        run: dotnet restore Svns.sln
+        run: dotnet restore
 
       - name: Build
-        run: dotnet build Svns.sln -c Release --no-restore
+        run: dotnet build -c Release --no-restore
 
       - name: Test
         run: dotnet test Svns.Tests -c Release --no-build --verbosity normal
