@@ -1,5 +1,6 @@
 using Xunit;
 using Svns.ViewModels;
+using System.Runtime.InteropServices;
 
 namespace Svns.Tests.ViewModels;
 
@@ -18,6 +19,14 @@ public class RenameViewModelTests
     [InlineData("", false)]
     [InlineData("   ", false)]
     [InlineData("valid.txt", true)]
+    public void IsValidFileName_ReturnsExpected_Common(string name, bool expected)
+    {
+        // Test file name validation logic
+        var isValid = IsValidFileName(name);
+        Assert.Equal(expected, isValid);
+    }
+
+    [Theory]
     [InlineData("file<name>.txt", false)]
     [InlineData("file>name.txt", false)]
     [InlineData("file:name.txt", false)]
@@ -25,9 +34,15 @@ public class RenameViewModelTests
     [InlineData("file|name.txt", false)]
     [InlineData("file?name.txt", false)]
     [InlineData("file*name.txt", false)]
-    public void IsValidFileName_ReturnsExpected(string name, bool expected)
+    public void IsValidFileName_ReturnsExpected_WindowsSpecific(string name, bool expected)
     {
-        // Test file name validation logic
+        // These characters are only invalid on Windows
+        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            // Skip on Unix/macOS - these characters are valid filenames
+            return;
+        }
+
         var isValid = IsValidFileName(name);
         Assert.Equal(expected, isValid);
     }

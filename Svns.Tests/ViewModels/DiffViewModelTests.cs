@@ -8,8 +8,10 @@ public class DiffViewModelTests
     [Fact]
     public void Constructor_SetsFilePathAndName()
     {
-        var viewModel = new DiffViewModel(@"C:\repo\src\file.cs", "");
-        Assert.Equal(@"C:\repo\src\file.cs", viewModel.FilePath);
+        // Use platform-agnostic path
+        var path = System.IO.Path.Combine("repo", "src", "file.cs");
+        var viewModel = new DiffViewModel(path, "");
+        Assert.Equal(path, viewModel.FilePath);
         Assert.Equal("file.cs", viewModel.FileName);
     }
 

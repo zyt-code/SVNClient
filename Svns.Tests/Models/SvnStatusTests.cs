@@ -8,7 +8,9 @@ public class SvnStatusTests
     [Fact]
     public void Name_ReturnsFileName_FromPath()
     {
-        var status = new SvnStatus { Path = @"C:\repo\src\file.cs" };
+        // Use platform-agnostic path
+        var path = System.IO.Path.Combine("repo", "src", "file.cs");
+        var status = new SvnStatus { Path = path };
         Assert.Equal("file.cs", status.Name);
     }
 

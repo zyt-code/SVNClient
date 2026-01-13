@@ -45,12 +45,14 @@ public class CommitViewModelTests
     [Fact]
     public void CommitFileNode_PathAndName_CanBeSet()
     {
+        // Use platform-agnostic path
+        var path = System.IO.Path.Combine("repo", "file.cs");
         var item = new CommitFileNode
         {
-            Path = @"C:\repo\file.cs",
+            Path = path,
             Name = "file.cs"
         };
-        Assert.Equal(@"C:\repo\file.cs", item.Path);
+        Assert.Equal(path, item.Path);
         Assert.Equal("file.cs", item.Name);
     }
 
@@ -92,10 +94,10 @@ public class CommitViewModelPropertyTests
     }
 
     [Fact]
-    public void SelectAll_DefaultsToTrue()
+    public void IsAllSelected_PropertyExists()
     {
-        // Test the default value of SelectAll property
-        var propertyInfo = typeof(CommitViewModel).GetProperty("SelectAll");
+        // Test that IsAllSelected property exists (formerly SelectAll)
+        var propertyInfo = typeof(CommitViewModel).GetProperty("IsAllSelected");
         Assert.NotNull(propertyInfo);
         Assert.Equal(typeof(bool), propertyInfo.PropertyType);
     }
@@ -201,10 +203,10 @@ public class CommitFileNodePropertyTests
     [Fact]
     public void IsChecked_IsObservable()
     {
-        // Test that IsChecked property is observable
+        // Test that IsChecked property is observable (nullable bool for three-state)
         var propertyInfo = typeof(CommitFileNode).GetProperty("IsChecked");
         Assert.NotNull(propertyInfo);
-        Assert.Equal(typeof(bool), propertyInfo.PropertyType);
+        Assert.Equal(typeof(bool?), propertyInfo.PropertyType);
     }
 
     [Fact]
@@ -217,7 +219,11 @@ public class CommitFileNodePropertyTests
             var item = new CommitFileNode { Status = type };
             var statusText = item.StatusText;
             Assert.NotNull(statusText);
-            Assert.NotEmpty(statusText);
+            // Normal status intentionally returns empty string (no badge shown)
+            if (type != SvnStatusType.Normal && type != SvnStatusType.None)
+            {
+                Assert.NotEmpty(statusText);
+            }
         }
     }
 

@@ -243,7 +243,7 @@ public class LocalizationService : ILocalizationService
             ["Commit.KeepLocks"] = "Keep locks",
             ["Commit.NoFilesSelected"] = "No files selected for commit",
             ["Commit.EmptyMessage"] = "Commit message cannot be empty",
-            ["Commit.Success"] = "Commit successful",
+            ["Commit.Success"] = "Commit successful. Committed revision {0}.",
             ["Commit.Failed"] = "Commit failed",
 
             // Update Dialog

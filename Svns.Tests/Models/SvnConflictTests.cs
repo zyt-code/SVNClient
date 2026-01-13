@@ -27,7 +27,9 @@ public class SvnConflictTests
     [Fact]
     public void FileName_ReturnsFileName_FromPath()
     {
-        var conflict = new SvnConflict { Path = @"C:\repo\src\file.cs" };
+        // Use platform-agnostic path
+        var path = System.IO.Path.Combine("repo", "src", "file.cs");
+        var conflict = new SvnConflict { Path = path };
         Assert.Equal("file.cs", conflict.FileName);
     }
 

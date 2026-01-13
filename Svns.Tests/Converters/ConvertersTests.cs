@@ -2,6 +2,7 @@ using Xunit;
 using Svns.Converters;
 using Svns.Models;
 using System.Globalization;
+using System.Runtime.InteropServices;
 
 namespace Svns.Tests.Converters;
 
@@ -65,15 +66,26 @@ public class FilePathConverterTests
     private readonly FilePathShortenerConverter _shortenerConverter = new();
 
     [Theory]
-    [InlineData(@"C:\Projects\MyProject\file.cs", "file.cs")]
-    [InlineData(@"/home/user/projects/file.cs", "file.cs")]
+    [InlineData("/home/user/projects/file.cs", "file.cs")]
     [InlineData("file.cs", "file.cs")]
-    [InlineData(@"C:\file.txt", "file.txt")]
     public void FilePathToFileName_ConvertsCorrectly(string input, string expected)
     {
         var result = _fileNameConverter.Convert(input, typeof(string), null, CultureInfo.InvariantCulture);
 
         Assert.Equal(expected, result);
+    }
+
+    [Fact]
+    public void FilePathToFileName_ConvertsWindowsPath_WhenOnWindows()
+    {
+        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            // Skip on Unix systems
+            return;
+        }
+
+        var result = _fileNameConverter.Convert(@"C:\file.txt", typeof(string), null, CultureInfo.InvariantCulture);
+        Assert.Equal("file.txt", result);
     }
 
     [Fact]
@@ -93,13 +105,26 @@ public class FilePathConverterTests
     }
 
     [Theory]
-    [InlineData(@"C:\Projects\MyProject\file.cs", @"C:\Projects\MyProject")]
+    [InlineData("/home/user/projects/file.cs", "/home/user/projects")]
     [InlineData("file.cs", "file.cs")] // No directory, returns original
     public void FilePathToDirectoryName_ConvertsCorrectly(string input, string expected)
     {
         var result = _directoryConverter.Convert(input, typeof(string), null, CultureInfo.InvariantCulture);
 
         Assert.Equal(expected, result);
+    }
+
+    [Fact]
+    public void FilePathToDirectoryName_ConvertsWindowsPath_WhenOnWindows()
+    {
+        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            // Skip on Unix systems
+            return;
+        }
+
+        var result = _directoryConverter.Convert(@"C:\Projects\MyProject\file.cs", typeof(string), null, CultureInfo.InvariantCulture);
+        Assert.Equal(@"C:\Projects\MyProject", result);
     }
 
     [Fact]
@@ -113,7 +138,9 @@ public class FilePathConverterTests
     [Fact]
     public void FilePathShortener_ReturnsOriginal_WhenPathIsShort()
     {
-        var shortPath = @"C:\short.txt";
+        var shortPath = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+            ? @"C:\short.txt"
+            : "/short.txt";
         var result = _shortenerConverter.Convert(shortPath, typeof(string), null, CultureInfo.InvariantCulture);
 
         Assert.Equal(shortPath, result);
@@ -122,7 +149,10 @@ public class FilePathConverterTests
     [Fact]
     public void FilePathShortener_ShortensLongPath()
     {
-        var longPath = @"C:\Very\Long\Path\That\Exceeds\The\Maximum\Length\Allowed\For\Display\file.txt";
+        var longPath = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+            ? @"C:\Very\Long\Path\That\Exceeds\The\Maximum\Length\Allowed\For\Display\file.txt"
+            : "/very/long/path/that/exceeds/the/maximum/length/allowed/for/display/file.txt";
+
         var result = _shortenerConverter.Convert(longPath, typeof(string), null, CultureInfo.InvariantCulture) as string;
 
         Assert.NotNull(result);
@@ -133,7 +163,10 @@ public class FilePathConverterTests
     [Fact]
     public void FilePathShortener_RespectsParameterLength()
     {
-        var path = @"C:\Projects\MyProject\SubFolder\file.cs";
+        var path = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+            ? @"C:\Projects\MyProject\SubFolder\file.cs"
+            : "/projects/myproject/subfolder/file.cs";
+
         var result = _shortenerConverter.Convert(path, typeof(string), "20", CultureInfo.InvariantCulture) as string;
 
         Assert.NotNull(result);

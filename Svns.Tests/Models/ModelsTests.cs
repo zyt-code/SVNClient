@@ -176,7 +176,9 @@ public class WorkingCopyInfoTests
     [Fact]
     public void DisplayName_ReturnsLastDirectoryName()
     {
-        var info = new WorkingCopyInfo { Path = @"C:\Projects\MyProject" };
+        // Use platform-agnostic path
+        var path = System.IO.Path.Combine("Projects", "MyProject");
+        var info = new WorkingCopyInfo { Path = path };
 
         Assert.Equal("MyProject", info.DisplayName);
     }
