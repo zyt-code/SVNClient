@@ -26,6 +26,10 @@ jobs:
             name: macos-arm64
             rid: osx-arm64
             extension: zip
+          - os: ubuntu-latest
+            name: linux
+            rid: linux-x64
+            extension: tar.gz
 
     runs-on: ${{ matrix.os }}
     timeout-minutes: 30
@@ -47,8 +51,8 @@ jobs:
         run: |
           dotnet publish -c Release -r ${{ matrix.rid }} --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o publish/${{ matrix.rid }}
 
-      - name: Build macOS
-        if: startsWith(matrix.name, 'macos')
+      - name: Build macOS/Linux
+        if: startsWith(matrix.name, 'macos') || matrix.name == 'linux'
         run: |
           dotnet publish -c Release -r ${{ matrix.rid }} --self-contained true -p:PublishSingleFile=true -o publish/${{ matrix.rid }}
 
@@ -63,6 +67,12 @@ jobs:
         run: |
           cd publish/${{ matrix.rid }}
           zip -r ../../Svns-${{ matrix.rid }}.${{ matrix.extension }} *
+
+      - name: Create Linux Archive
+        if: matrix.name == 'linux'
+        run: |
+          cd publish/${{ matrix.rid }}
+          tar -czvf ../../Svns-${{ matrix.rid }}.${{ matrix.extension }} *
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
@@ -93,7 +103,9 @@ jobs:
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
-          files: artifacts/**/*.zip
+          files: |
+            artifacts/**/*.zip
+            artifacts/**/*.tar.gz
           draft: false
           prerelease: false
           generate_release_notes: true

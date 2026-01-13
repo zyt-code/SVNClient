@@ -111,6 +111,11 @@ public class FilePathConverterTests
     {
         var result = _directoryConverter.Convert(input, typeof(string), null, CultureInfo.InvariantCulture);
 
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && expected.Contains('/'))
+        {
+            expected = expected.Replace('/', '\\');
+        }
+
         Assert.Equal(expected, result);
     }
 
